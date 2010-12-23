@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="net.hoopajoo.android.SoftKeys"
+      android:versionCode="14"
+      android:versionName="3.00">
+        
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name=".Globals">
+        <activity android:name=".Keys"
+		          android:clearTaskOnLaunch="true"
+		       	  android:stateNotNeeded="true"
+        		  android:launchMode="singleTask"
+        		  android:theme="@style/Floating"
+                  android:label="@string/app_name">
+                  <!--  android:launchMode="singleInstance" -->
+            <intent-filter>
+            	<!-- 
+                <action android:name="android.intent.action.CAMERA_BUTTON" />
+                <action android:name="android.intent.action.CALL_BUTTON" />
+                <action android:name="android.intent.action.SEARCH_LONG_PRESS" />
+                -->
+                <action android:name="android.intent.action.MAIN" />
+               
+               <!--  launcher icon, keeping it around now in case you accidentally lock
+                     yourself out of softkeys by messing with the home key behavior -->
+ 				<category android:name="android.intent.category.LAUNCHER"/>
+                
+                <!-- this binds to launcher too --> 
+ 					<category android:name="android.intent.category.HOME"/>
+                   	<category android:name="android.intent.category.DEFAULT" />
+                   	<category android:name="android.intent.category.MONKEY" />
+            </intent-filter>
+
+            <intent-filter>            
+                <action android:name="net.hoopajoo.SoftKeys.KEY_MENU" />
+                <action android:name="net.hoopajoo.SoftKeys.KEY_HOME" />
+                <action android:name="net.hoopajoo.SoftKeys.KEY_BACK" />
+                <action android:name="net.hoopajoo.SoftKeys.KEY_SEARCH" />
+            </intent-filter>
+                  
+        </activity>
+        <activity
+			android:name=".Prefs"
+			android:label="@string/app_name">
+		</activity>
+		
+		<service android:name=".SoftKeysService"/>
+    </application>
+    <uses-sdk android:minSdkVersion="4" />
+
+</manifest> 

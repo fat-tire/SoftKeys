@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SoftKeys</string>
+
+    <string name="recent_tasks_title">Recent Tasks:</string>
+
+    <string name="pref_category_service_title">SoftKeys Service</string>
+    <string name="pref_service_title">Run Service</string>
+    <string name="pref_service_summary_on">Run SoftKeys Service</string>
+    <string name="pref_service_summary_off">Just Use SoftKeys Launcher</string>
+    <string name="pref_service_size_title">Size</string>
+    <string name="pref_service_size_summary">Size of Service Popup Buttons</string>
+    <string name="pref_service_transparency_title">Button Bar Transparency</string>
+    <string name="pref_service_transparency_summary">Set Transparency of Service Popup</string>
+    <string name="pref_service_popper_transparency_title">Popper Transparency</string>
+    <string name="pref_service_popper_transparency_summary">Set Transparency of Button That Triggers Service Popup</string>
+    <string name="pref_service_close_after_title">Auto Hide</string>
+    <string name="pref_service_close_after_summary_on">Hide After Pressing Any Key But Back</string>
+    <string name="pref_service_close_after_summary_off">Do Not Auto Hide</string>
+    <string name="pref_service_close_after_back_title">Auto Hide After Back</string>
+    <string name="pref_service_close_after_back_summary_on">Hide After Pressing Back</string>
+    <string name="pref_service_close_after_back_summary_off">Do Not Hide After Pressing Back</string>
+    <string name="pref_service_no_background_title">Transparent Background</string>
+    <string name="pref_service_no_background_summary_on">Background is Transparent, Buttons are Floating</string>
+    <string name="pref_service_no_background_summary_off">Normal Background Containing Buttons</string>
+    
+    <string name="pref_category_virtual_title">Virtual Home Button</string>
+    <string name="pref_launcher_title">Normal Press</string>
+    <string name="pref_launcher_summary">Choose Launcher for Normal Press</string>
+    <string name="pref_launcher2_title">Long Press</string>
+    <string name="pref_launcher2_summary">Choose Launcher for Long Press</string>
+    <string name="pref_return_home_after_back_title">Return After Back</string>
+    <string name="pref_return_home_after_back_summary_on">Return to SoftKeys After Back Key</string>
+    <string name="pref_return_home_after_back_summary_off">Do Not Return to SoftKeys After Back Key</string>
+    
+    <string name="pref_category_physical_title">Physical Home Button</string>
+    <string name="pref_physical_note_title">NOTE:</string>    
+    <string name="pref_physical_note_summary">For Single/Double Press While SoftKeys is Open</string>
+    <string name="pref_homebutton_title">Single Press</string>
+    <string name="pref_homebutton_summary">Action for Single Home Key Press</string>
+    <string name="pref_homebuttonmulti_title">Double Press</string>
+    <string name="pref_homebuttonmulti_summary">Action For Double Home Key Press</string>
+    <string name="pref_homedoubletime_title">Double Press Time</string>
+    <string name="pref_homedoubletime_summary">Time Allow for Double Home Press in ms</string>
+    <string name="pref_prehomebutton_title">Home Button</string>
+    <string name="pref_prehomebutton_summary">Press/Double Press Home Button Options</string>
+
+    <string name="pref_category_info_title">About SoftKeys</string>
+    <string name="pref_version_title">Version</string>
+    <string name="pref_version_summary">%s</string>
+    <string name="pref_author_title">Author</string>
+    <string name="pref_author_summary">Steve Slaven &lt;bpk@hoopajoo.net&gt;</string>
+    <string name="pref_url_title">Website</string>
+    <string name="pref_url_summary">http://hoopajoo.net/</string>
+    
+    <string name="pref_category_visual_title">Visuals and Layout</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_theme_summary">Select Theme</string>
+    <string name="pref_exitbutton_title">Exit Button</string>
+    <string name="pref_exitbutton_summary_on">Show Exit Button</string>
+    <string name="pref_exitbutton_summary_off">Hide Exit Button</string>
+    <string name="pref_choosebutton_title">Prefs Button</string>
+    <string name="pref_choosebutton_summary_on">Show Prefs Button</string>
+    <string name="pref_choosebutton_summary_off">Hide Prefs Button</string>
+    
+    <string name="pref_screen_reorder_title">Change Button Order</string>
+    <string name="pref_order_menu_title">Menu Button Position</string>
+    <string name="pref_order_menu_summary">Menu Button Position</string>
+    <string name="pref_order_home_title">Home Button Position</string>
+    <string name="pref_order_home_summary">Home Button Position</string>
+    <string name="pref_order_back_title">Back Button Position</string>
+    <string name="pref_order_back_summary">Back Button Position</string>
+    <string name="pref_order_search_title">Search Button Position</string>
+    <string name="pref_order_search_summary">Search Button Position</string>
+    
+    <string name="pref_dim_behind_title">Dim Background</string>
+    <string name="pref_dim_behind_summary_on">Background is Dimmed</string>
+    <string name="pref_dim_behind_summary_off">Background is Not Dimmed</string>
+    <string name="pref_blur_behind_title">Blur Behind (slower)</string>
+    <string name="pref_blur_behind_summary_on">Background is Blurred (slower)</string>
+    <string name="pref_blur_behind_summary_off">Background is Not Blurred</string>
+
+    <string name="pref_recent_apps_title">Recent Apps</string>
+    <string name="pref_recent_apps_summary_on">Show Recent Apps</string>
+    <string name="pref_recent_apps_summary_off">Hide Recent Apps</string>
+
+    <string name="pref_notification_bar_title">Notification Bar</string>
+    <string name="pref_nb_softkeys_title">SoftKeys Button</string>
+    <string name="pref_nb_softkeys_summary_on">Show SoftKeys Button</string>
+    <string name="pref_nb_softkeys_summary_off">Do Not Show SoftKeys Button</string>
+    <string name="pref_nb_menu_title">Menu Button</string>
+    <string name="pref_nb_menu_summary_on">Show Menu Button</string>
+    <string name="pref_nb_menu_summary_off">Do Not Show Menu Button</string>
+    <string name="pref_nb_home_title">Home Button</string>
+    <string name="pref_nb_home_summary_on">Show Home Button</string>
+    <string name="pref_nb_home_summary_off">Do Not Show Home Button</string>
+    <string name="pref_nb_back_title">Back Button</string>
+    <string name="pref_nb_back_summary_on">Show Back Button</string>
+    <string name="pref_nb_back_summary_off">Do Not Show Back Button</string>
+    <string name="pref_nb_search_title">Search Button</string>
+    <string name="pref_nb_search_summary_on">Show Search button</string>
+    <string name="pref_nb_search_summary_off">Do Not Show Search Button</string>
+        
+</resources>

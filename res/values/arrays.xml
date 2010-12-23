@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="doubleTimes">
+    <item>100</item>
+    <item>200</item>
+    <item>300</item>
+    <item>400</item>
+    <item>500</item>
+  </string-array>
+  
+  <string-array name="orderValues">
+    <item>1</item>
+    <item>2</item>
+    <item>3</item>
+    <item>4</item>
+  </string-array>
+  
+  <string-array name="clickActionNames">
+    <item>Ignore</item>
+    <item>Exit</item>
+    <item>Launcher</item>
+    <item>Alt Launcher</item>
+    <item>SoftKeys</item>
+  </string-array>
+
+  <string-array name="clickActionValues">
+    <item>ignore</item>
+    <item>exit</item>
+    <item>launcher</item>
+    <item>launcher2</item>
+    <item>softkeys</item>
+  </string-array>
+
+ <string-array name="clickPreActionNames">
+    <item>Single Tap Launcher, Double Tap SoftKeys</item>
+    <item>Single Tap SoftKeys, Double Tap Launcher</item>
+  </string-array>
+
+  <string-array name="clickPreActionValues">
+    <item>launcher</item>
+    <item>softkeys</item>
+  </string-array>
+  
+  <string-array name="serviceSizeNames">
+	<item>Huge</item>
+    <item>Large</item>
+    <item>Medium</item>
+    <item>Small</item>
+    <item>Tiny</item>
+  </string-array>
+
+  <string-array name="serviceSizeValues">
+    <item>huge</item>
+    <item>large</item>
+    <item>medium</item>
+    <item>small</item>
+    <item>tiny</item>
+  </string-array>
+  
+</resources>

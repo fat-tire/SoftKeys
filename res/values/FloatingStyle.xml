@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+            <style name="Floating">
+			    <item name="android:windowBackground">@android:color/transparent</item>			    
+			    <item name="android:background">@android:color/transparent</item>
+			    <item name="android:windowIsFloating">true</item>
+			    <item name="android:windowNoTitle">true</item>
+			</style>
+			
+			<!--  These could have just been put in the above theme but I thought
+			      I would separate them out so I would remember this trick hopefully  -->
+			<style name="Floating.NoTitleBar">
+			        <item name="android:windowNoTitle">true</item>
+    		</style>
+    
+    		<style name="Floating.NoTitleBar.Fullscreen">
+        		<item name="android:windowFullscreen">true</item>
+        		<item name="android:windowContentOverlay">@null</item>
+        	</style>
+</resources>

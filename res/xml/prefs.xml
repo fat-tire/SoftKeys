@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Copyright (c) 2010 Steve Slaven
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+   <PreferenceCategory
+   		android:title="@string/pref_category_service_title">
+
+		        <CheckBoxPreference
+		                        android:title="@string/pref_service_title"
+		                        android:summaryOn="@string/pref_service_summary_on"
+		                        android:summaryOff="@string/pref_service_summary_off"
+		                        android:defaultValue="true"
+		                        android:key="service"
+		                        />
+		                        
+                <ListPreference
+		                        android:title="@string/pref_service_size_title"
+		                        android:summaryOn="@string/pref_service_size_summary"
+		                        android:entries="@array/serviceSizeNames"
+		                        android:entryValues="@array/serviceSizeValues"
+		                        android:defaultValue="medium"
+		                        android:key="service_size"
+		                        />
+		                        
+			    <com.hlidskialf.android.preference.SeekBarPreference 
+			    	android:key="service_transparency"
+			        android:title="@string/pref_service_transparency_title"
+			        android:summary="@string/pref_service_transparency_summary"
+			        android:defaultValue="0"
+			        android:max="100"
+			        />
+
+			    <com.hlidskialf.android.preference.SeekBarPreference 
+			    	android:key="service_popper_transparency"
+			        android:title="@string/pref_service_popper_transparency_title"
+			        android:summary="@string/pref_service_popper_transparency_summary"
+			        android:defaultValue="0"
+			        android:max="100"
+			        />			        
+			    <CheckBoxPreference
+		                        android:title="@string/pref_service_close_after_title"
+		                        android:summaryOn="@string/pref_service_close_after_summary_on"
+		                        android:summaryOff="@string/pref_service_close_after_summary_off"
+		                        android:defaultValue="true"
+		                        android:key="service_close_after"
+		                        />
+		                        
+			    <CheckBoxPreference
+		                        android:title="@string/pref_service_close_after_back_title"
+		                        android:summaryOn="@string/pref_service_close_after_back_summary_on"
+		                        android:summaryOff="@string/pref_service_close_after_back_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="service_close_after_back"
+		                        />
+		                        
+		        <CheckBoxPreference
+		                        android:title="@string/pref_service_no_background_title"
+		                        android:summaryOn="@string/pref_service_no_background_summary_on"
+		                        android:summaryOff="@string/pref_service_no_background_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="service_no_background"
+		                        />
+		            
+	</PreferenceCategory>
+	
+   <PreferenceCategory
+   		android:title="@string/pref_category_virtual_title">
+                        
+                <ListPreference
+                        android:title="@string/pref_launcher_title"
+                        android:summary="@string/pref_launcher_summary"
+                        android:key="launcher"
+                         />
+                <ListPreference
+                        android:title="@string/pref_launcher2_title"
+                        android:summary="@string/pref_launcher2_summary"
+                        android:key="launcher2"
+                         />
+                         
+		        <CheckBoxPreference
+		                        android:title="@string/pref_return_home_after_back_title"
+		                        android:summaryOn="@string/pref_return_home_after_back_summary_on"
+		                        android:summaryOff="@string/pref_return_home_after_back_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="return_home_after_back"
+		                        />
+		                        
+
+   </PreferenceCategory>
+   
+   <PreferenceCategory
+   		android:title="@string/pref_category_physical_title">
+   		<!-- 
+                 <Preference
+                        android:title="@string/pref_physical_note_title"
+                        android:summary="@string/pref_physical_note_summary"
+                         />
+                                                
+                <ListPreference
+                        android:title="@string/pref_homebutton_title"
+                        android:summary="@string/pref_homebutton_summary"
+                        android:key="homebutton"
+                        android:entries="@array/clickActionNames"
+                        android:entryValues="@array/clickActionValues"
+                        android:defaultValue="exit"
+                         />
+                         
+                <ListPreference
+                        android:title="@string/pref_homebuttonmulti_title"
+                        android:summary="@string/pref_homebuttonmulti_summary"
+                        android:key="homebuttonmulti"
+                        android:entries="@array/clickActionNames"
+                        android:entryValues="@array/clickActionValues"
+                        android:defaultValue="launcher"
+                         />
+              -->
+
+                <ListPreference
+                        android:title="@string/pref_prehomebutton_title"
+                        android:summary="@string/pref_prehomebutton_summary"
+                        android:key="prehomebutton"
+                        android:entries="@array/clickPreActionNames"
+                        android:entryValues="@array/clickPreActionValues"
+                        android:defaultValue="launcher"
+                         />
+                   
+                <ListPreference
+                        android:title="@string/pref_homedoubletime_title"
+                        android:summary="@string/pref_homedoubletime_summary"
+                        android:key="homedoubletime"
+                        android:entries="@array/doubleTimes"
+                        android:entryValues="@array/doubleTimes"
+                        android:defaultValue="200"
+                         />
+
+        </PreferenceCategory>
+        
+   		<PreferenceCategory
+   			android:title="@string/pref_category_visual_title">
+                        
+                <ListPreference
+                        android:title="@string/pref_theme_title"
+                        android:summary="@string/pref_theme_summary"
+                        android:key="theme"
+                         />
+                         
+                 <CheckBoxPreference
+                        android:title="@string/pref_exitbutton_title"
+                        android:summaryOn="@string/pref_exitbutton_summary_on"
+                        android:summaryOff="@string/pref_exitbutton_summary_off"
+                        android:defaultValue="true"
+                        android:key="exitbutton"
+                        />
+                        
+                 <CheckBoxPreference
+                        android:title="@string/pref_choosebutton_title"
+                        android:summaryOn="@string/pref_choosebutton_summary_on"
+                        android:summaryOff="@string/pref_choosebutton_summary_off"
+                        android:defaultValue="true"
+                        android:key="choosebutton"
+                        />
+                        
+                 
+				
+		        <CheckBoxPreference
+		                        android:title="@string/pref_blur_behind_title"
+		                        android:summaryOn="@string/pref_blur_behind_summary_on"
+		                        android:summaryOff="@string/pref_blur_behind_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="blur_behind"
+		                        />
+		                        
+		        <CheckBoxPreference
+		                        android:title="@string/pref_dim_behind_title"
+		                        android:summaryOn="@string/pref_dim_behind_summary_on"
+		                        android:summaryOff="@string/pref_dim_behind_summary_off"
+		                        android:defaultValue="true"
+		                        android:key="dim_behind"
+		                        />
+
+		        <CheckBoxPreference
+		                        android:title="@string/pref_recent_apps_title"
+		                        android:summaryOn="@string/pref_recent_apps_summary_on"
+		                        android:summaryOff="@string/pref_recent_apps_summary_off"
+		                        android:defaultValue="true"
+		                        android:key="recent_apps"
+		                        />
+		                        
+		         <PreferenceScreen android:title="@string/pref_screen_reorder_title">                
+                 <ListPreference android:title="@string/pref_order_back_title" android:summary="@string/pref_order_back_summary" android:key="order_back" android:entries="@array/orderValues" android:entryValues="@array/orderValues" android:defaultValue="1" />
+                         
+                 <ListPreference android:title="@string/pref_order_home_title" android:summary="@string/pref_order_home_summary" android:key="order_home" android:entries="@array/orderValues" android:entryValues="@array/orderValues" android:defaultValue="2" />
+                         
+                 <ListPreference android:title="@string/pref_order_menu_title" android:summary="@string/pref_order_menu_summary" android:key="order_menu" android:entries="@array/orderValues" android:entryValues="@array/orderValues" android:defaultValue="3" />
+                         
+                 <ListPreference android:title="@string/pref_order_search_title" android:summary="@string/pref_order_search_summary" android:key="order_search" android:entries="@array/orderValues" android:entryValues="@array/orderValues" android:defaultValue="4" />
+				</PreferenceScreen>
+				
+        </PreferenceCategory>
+        
+        <PreferenceCategory
+        	android:title="@string/pref_notification_bar_title">
+		        <CheckBoxPreference
+		                        android:title="@string/pref_nb_softkeys_title"
+		                        android:summaryOn="@string/pref_nb_softkeys_summary_on"
+		                        android:summaryOff="@string/pref_nb_softkeys_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="nb_softkeys"
+		                        />		   
+		                                	
+		        <CheckBoxPreference
+		                        android:title="@string/pref_nb_menu_title"
+		                        android:summaryOn="@string/pref_nb_menu_summary_on"
+		                        android:summaryOff="@string/pref_nb_menu_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="nb_menu"
+		                        />		                        
+		        <CheckBoxPreference
+		                        android:title="@string/pref_nb_home_title"
+		                        android:summaryOn="@string/pref_nb_home_summary_on"
+		                        android:summaryOff="@string/pref_nb_home_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="nb_home"
+		                        />
+		        <CheckBoxPreference
+		                        android:title="@string/pref_nb_back_title"
+		                        android:summaryOn="@string/pref_nb_back_summary_on"
+		                        android:summaryOff="@string/pref_nb_back_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="nb_back"
+		                        />
+		        <CheckBoxPreference
+		                        android:title="@string/pref_nb_search_title"
+		                        android:summaryOn="@string/pref_nb_search_summary_on"
+		                        android:summaryOff="@string/pref_nb_search_summary_off"
+		                        android:defaultValue="false"
+		                        android:key="nb_search"
+		                        />
+        </PreferenceCategory>
+        
+        <PreferenceCategory
+        	android:title="@string/pref_category_info_title">
+        
+	        <Preference
+	            android:key="pref_version"
+	            android:title="@string/pref_version_title"
+	            android:summary="@string/pref_version_summary" />
+	        
+	        <Preference
+	                android:key="pref_author"
+	                android:title="@string/pref_author_title"
+	                android:summary="@string/pref_author_summary" />
+	            
+	        <Preference
+	                android:key="pref_url"
+	                android:title="@string/pref_url_title"
+	                android:summary="@string/pref_url_summary" />
+	                
+	    </PreferenceCategory>
+</PreferenceScreen>
