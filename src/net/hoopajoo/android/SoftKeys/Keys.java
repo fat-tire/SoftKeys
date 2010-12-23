@@ -24,17 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -50,7 +47,6 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class Keys extends Activity implements OnClickListener, OnLongClickListener {
@@ -92,10 +88,6 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             mAction = act;
         }
 
-        NotificationButton( String text, String pref, RemoteViews view, Drawable d, String act ) {
-            this( text, pref, view, d, 0, act );
-        }
-        
         NotificationButton( String text, String pref, int icon, String act ) {
             this( text, pref, null, null, icon, act );
         }
