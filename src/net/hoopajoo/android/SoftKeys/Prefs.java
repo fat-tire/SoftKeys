@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.Preference.OnPreferenceClickListener;
 
 public class Prefs extends PreferenceActivity {    
     /** Called when the activity is first created. */
@@ -58,6 +59,21 @@ public class Prefs extends PreferenceActivity {
 
         Preference version = (Preference)findPreference( "pref_version" );
         version.setSummary( getString( R.string.pref_version_summary, ver ) );
+        
+        findPreference( "pref_help" )
+            .setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        triggerHelp();
+                        return false;
+                    }
+            } );
+    }
+
+    private void triggerHelp() {
+        Intent intent = new Intent( this, QuickDoc.class );
+        intent.putExtra( "type", "help" );
+        startActivity( intent );
     }
     
     private void fillListFromIntent( ListPreference l, Intent i, String firstItem, String firstValue ) {

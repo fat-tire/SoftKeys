@@ -34,6 +34,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -360,6 +361,17 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         // simulate wake
         isPaused = true;
         onNewIntent( getIntent() );
+        
+        // what's new/getting started?
+        int force_level = 2010122701;
+        if( settings.getInt( "last_intro_level", 0 ) < force_level ) {
+            Intent intent = new Intent( this, QuickDoc.class );
+            intent.putExtra( "type", "getting_started" );
+            startActivity( intent );
+            SharedPreferences.Editor e = settings.edit();
+            e.putInt( "last_intro_level", force_level );
+            e.commit();
+        }
     }
 
 

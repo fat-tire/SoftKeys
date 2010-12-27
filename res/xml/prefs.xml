@@ -256,6 +256,11 @@
         
         <PreferenceCategory
         	android:title="@string/pref_category_info_title">
+        	
+	        <Preference
+	            android:key="pref_help"
+	            android:title="@string/pref_help_title"
+	            android:summary="@string/pref_help_summary" />
         
 	        <Preference
 	            android:key="pref_version"

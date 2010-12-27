@@ -3,6 +3,7 @@
     <string name="app_name">SoftKeys</string>
 
     <string name="recent_tasks_title">Recent Tasks:</string>
+    <string name="quickdoc_exit">Close</string>
 
     <string name="pref_category_service_title">SoftKeys Service</string>
     <string name="pref_service_title">Run Service</string>
@@ -52,6 +53,8 @@
     <string name="pref_author_summary">Steve Slaven &lt;bpk@hoopajoo.net&gt;</string>
     <string name="pref_url_title">Website</string>
     <string name="pref_url_summary">http://hoopajoo.net/</string>
+    <string name="pref_help_title">Help</string>
+    <string name="pref_help_summary">View Included Help</string>
     
     <string name="pref_category_visual_title">Visuals and Layout</string>
     <string name="pref_theme_title">Theme</string>
