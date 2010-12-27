@@ -24,7 +24,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Shader;
 import android.graphics.Bitmap.Config;
+import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
@@ -68,8 +70,31 @@ public class Generator {
             if( theme.getBoolean( new String[] { prefix + "_resize_background", "resize_background" } ) ) {
                 d = resizeImage( d, iconSize, iconSize );
             }
+            
+            applyTiling( d, theme.getString( new String[] {
+                    prefix + "_tile_background", 
+                    "tile_background" 
+                } ) );
+
             container.setBackgroundDrawable( d );
         }
+        
+        // If they have specified a view id to use for insertion then switch to that now
+        ViewGroup button_container = container;
+        String button_container_name = theme.getString( new String[] {
+                prefix + "_button_container_id",
+                "button_container_id"
+        } );
+        if( button_container_name != null ) {
+            button_container = (ViewGroup)container.findViewById( theme.getId(
+                    new String[] { button_container_name } ) );
+            
+            // if it's null just go back to main container
+            if( button_container == null ) {
+                button_container = container;
+            }
+        }
+            
 
         // now we add the buttons
         if( buttons == null ) {
@@ -112,7 +137,7 @@ public class Generator {
             ImageButton b = (ImageButton)theme.inflateLayout( c,
                     new String[] { prefix + "_button_" + name, 
                             prefix + "_button", "button_" + name, "button" }
-                , container, false );
+                , button_container, false );
             b.setId( i );
             
             // Add our images at the size we want
@@ -142,10 +167,17 @@ public class Generator {
                     d = resizeImage( d, iconSize, iconSize );
                 }
 
+                applyTiling( d, theme.getString( new String[] {
+                    prefix + "_tile_button_background_" + name, 
+                    prefix + "_tile_button_background", 
+                    "tile_button_background_" + name,
+                    "tile_button_background" 
+                } ) );
+
                 b.setBackgroundDrawable( d );
             }
             
-            container.addView( b );
+            button_container.addView( b );
         }
         
         // add to root
@@ -189,6 +221,47 @@ public class Generator {
             ret.setTileModeXY( ( (BitmapDrawable)d ).getTileModeX(), ( (BitmapDrawable)d ).getTileModeY() );
         }
         return ret;
-      }
+    }
+    
+    
+    /// NOTE: using any tile mode CLAMP seems to crash the emulator
+    //        looking around online some people are saying it crashes their stuff
+    //        too, don't know who's to blame but it seems like avoiding
+    //        clamp is a good idea if you want compatibility
+    // tiling is specified as mode,mode for x/y tiling, or just mode to
+    // specify both x and y tiling
+    private static void applyTiling( Drawable d, String tilemode ) {
+        // check if they specify tiling, this will override tiling in an xml bitmap
+        // it's mostly here in case they want just one dimension of tiling instead of both
+        if( d instanceof BitmapDrawable ) {
+            BitmapDrawable bm = (BitmapDrawable)d;
+            // according to docs -1 is the disabled mode but doesn't exist as a constant
+            // so I'm hoping that setting it null acheives the same effect
+            Shader.TileMode[] tms = new Shader.TileMode[] { null, null };
+            
+            if( tilemode != null ) {
+                String[] modes = new String[] { tilemode, tilemode };
+                if( tilemode.contains( "," ) ) {
+                    modes = tilemode.split( "," );
+                }
+                
+                for( int i = 0; i < 2; i++ ) {
+                    String check = modes[ i ];
+                    if( check.equals( "clamp" ) ) {
+                        tms[ i ] = TileMode.CLAMP;
+                    }else if( check.equals( "repeat" ) ) {
+                        tms[ i ] = TileMode.REPEAT;
+                    }else if( check.equals( "mirror" ) ) {
+                        tms[ i ] = TileMode.MIRROR;
+                    }else{
+                        // clear tiling, e.g. disabled
+                        tms[ i ] = null;
+                    }
+                }
+            }
+            
+            bm.setTileModeXY( tms[ 0 ], tms[ 1 ] );
+        }
+    }
 }
     

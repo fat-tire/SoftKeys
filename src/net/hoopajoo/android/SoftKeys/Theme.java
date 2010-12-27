@@ -137,6 +137,16 @@ public class Theme {
     }
     */
     
+    // this returns the first ID matched, for use by the generator to find the
+    // button container view by id
+    public int getId( String[] name ) {
+        IdPack i = getId( name, "id" );
+        if( i != null ) {
+            return i.id;
+        }
+        return( 0 );
+    }
+    
     private IdPack getId( String[] name, String type ) {
         // return the most specific match, from theme first then from app
         for( IdPack check : mResources ) {
