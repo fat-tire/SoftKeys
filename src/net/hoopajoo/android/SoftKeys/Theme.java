@@ -69,6 +69,32 @@ public class Theme {
         return( null );
     }
     
+    // these check theme config flags
+    public boolean getBoolean( String[] name ) {
+        return getBoolean( name, false );
+    }
+    
+    public boolean getBoolean( String[] name, boolean def ) {
+        String flag = getString( name );
+        if( flag != null ) {
+            // t/true is true, everything else is false
+            if( flag.startsWith( "t" ) ) {
+                return( true );
+            }
+            return( false );
+        }
+        
+        return( def );
+    }
+    
+    public String getString( String[] name ) {
+        IdPack i = getId( name, "string" );
+        if( i != null ) {
+            return i.R.getString( i.id );
+        }
+        return( null );        
+    }
+    
     // For use mostly with the notification bar, allowing custom themes to include
     // new icons primarily, but since it's a layout they can do more than that
     public RemoteViews getRemoteViews( String[] name ) {

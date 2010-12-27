@@ -64,6 +64,10 @@ public class Generator {
             );
         
         if( d != null ) {
+            // resize?
+            if( theme.getBoolean( new String[] { prefix + "_resize_background", "resize_background" } ) ) {
+                d = resizeImage( d, iconSize, iconSize );
+            }
             container.setBackgroundDrawable( d );
         }
 
@@ -130,6 +134,14 @@ public class Generator {
                 );
             
             if( d != null ) {
+                if( theme.getBoolean( new String[] { 
+                        prefix + "_resize_button_background_" + name, 
+                        prefix + "_resize_button_background", 
+                        "resize_button_background_" + name,
+                        "resize_button_background" } ) ) {
+                    d = resizeImage( d, iconSize, iconSize );
+                }
+
                 b.setBackgroundDrawable( d );
             }
             
@@ -171,7 +183,12 @@ public class Generator {
         Matrix matrix = new Matrix();
         matrix.postScale( scaleWidth, scaleHeight);
 
-        return new BitmapDrawable( Bitmap.createBitmap(b, 0, 0, width, height, matrix, true) ); 
+        BitmapDrawable ret = new BitmapDrawable( Bitmap.createBitmap(b, 0, 0, width, height, matrix, true) );
+        // copy tile mode
+        if( d instanceof BitmapDrawable ) {
+            ret.setTileModeXY( ( (BitmapDrawable)d ).getTileModeX(), ( (BitmapDrawable)d ).getTileModeY() );
+        }
+        return ret;
       }
 }
     
