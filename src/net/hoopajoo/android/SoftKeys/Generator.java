@@ -56,9 +56,32 @@ public class Generator {
         iconSize = (int)(iconSize * iconScale);
         
         // we start with some kind of viewgroup (linearlayout,etc)
-        ViewGroup container = (ViewGroup)theme.inflateLayout( c,
+        ViewGroup orig_container = (ViewGroup)theme.inflateLayout( c,
                 new String[] { prefix + "_button_container", "button_container" }
             , root, false );
+        
+        // If they have specified a view id to use for insertion then switch to that now
+        // this way they can create some special view group with other decorations, and
+        // specify the actual child viewgroup we need to add the buttons too (like if they
+        // want to stack some images or something to create a composite background using a
+        // frameview)
+        // Most themes probably don't need this but I figure maybe someone will
+        ViewGroup container = orig_container;
+        String button_container_name = theme.getString( new String[] {
+                prefix + "_button_container_id",
+                "button_container_id"
+        } );
+        
+        if( button_container_name != null ) {
+            container = (ViewGroup)orig_container.findViewById( theme.getId(
+                    new String[] { button_container_name } ) );
+            
+            // if it's null just go back to main container
+            if( container == null ) {
+                container = orig_container;
+            }
+        }
+
         container.setId( R.id.button_container );
         Drawable d = theme.getDrawable( 
                 new String[] { prefix + "_button_container_background", 
@@ -79,23 +102,6 @@ public class Generator {
             container.setBackgroundDrawable( d );
         }
         
-        // If they have specified a view id to use for insertion then switch to that now
-        ViewGroup button_container = container;
-        String button_container_name = theme.getString( new String[] {
-                prefix + "_button_container_id",
-                "button_container_id"
-        } );
-        if( button_container_name != null ) {
-            button_container = (ViewGroup)container.findViewById( theme.getId(
-                    new String[] { button_container_name } ) );
-            
-            // if it's null just go back to main container
-            if( button_container == null ) {
-                button_container = container;
-            }
-        }
-            
-
         // now we add the buttons
         if( buttons == null ) {
             buttons = new int[] { R.id.menu, R.id.home, R.id.back,
@@ -137,7 +143,7 @@ public class Generator {
             ImageButton b = (ImageButton)theme.inflateLayout( c,
                     new String[] { prefix + "_button_" + name, 
                             prefix + "_button", "button_" + name, "button" }
-                , button_container, false );
+                , container, false );
             b.setId( i );
             
             // Add our images at the size we want
@@ -177,15 +183,15 @@ public class Generator {
                 b.setBackgroundDrawable( d );
             }
             
-            button_container.addView( b );
+            container.addView( b );
         }
         
         // add to root
         if( root != null ) {
-            root.addView( container );
+            root.addView( orig_container );
         }
         
-        return( container );
+        return( orig_container );
     }
     
     // this will return a new drawable scaled to the new size, so you don't have to mutable the source
