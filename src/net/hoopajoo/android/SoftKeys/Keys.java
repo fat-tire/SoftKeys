@@ -360,11 +360,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             // last ditch
             defaultLauncher = "com.android.launcher";
         }
-        
-        // simulate wake
-        isPaused = true;
-        onNewIntent( getIntent() );
-        
+ 
         // what's new/getting started?
         int force_level = 2010122701;
         if( settings.getInt( "last_intro_level", 0 ) < force_level ) {
@@ -375,6 +371,10 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             e.putInt( "last_intro_level", force_level );
             e.commit();
         }
+        
+        // simulate wake
+        isPaused = true;
+        onNewIntent( getIntent() );
     }
 
     @Override
