@@ -40,6 +40,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -374,7 +377,31 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         }
     }
 
-
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        getMenuInflater().inflate( R.menu.main, menu );
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item ) {
+        // Handle item selection
+        switch( item.getItemId() ) {
+            case R.id.menu_help:
+                Intent intent = new Intent( this, QuickDoc.class );
+                intent.putExtra( "type", "help" );
+                startActivity( intent );
+                return true;
+                
+            case R.id.menu_settings:
+                generic_click( R.id.settings, false );
+                return true;
+                
+            default:
+                return super.onOptionsItemSelected( item );
+        }
+    }
+    
     @Override
     public void onNewIntent( Intent i ) {
         Globals app = (Globals)getApplication();
@@ -641,10 +668,12 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
  
     @Override
     public boolean onKeyDown( int code, KeyEvent k ) {
+        /* let menu be menu
         if( code == KeyEvent.KEYCODE_MENU ) {
             generic_click( R.id.settings, false );
             return true;
         }
+        */
         return super.onKeyDown( code, k );
     }
     
