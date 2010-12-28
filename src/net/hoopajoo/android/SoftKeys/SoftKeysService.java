@@ -258,7 +258,8 @@ public class SoftKeysService extends Service {
 
         // insert the container
         ViewGroup container = (ViewGroup)Generator.createButtonContainer( this, 0, buttonMult, "service", (ViewGroup)mView.findViewById( R.id.main_view ) );
-        container.removeView( container.findViewById( R.id.settings ) ); // no settings in service
+        // container may not be button_container for a custom xml view
+        ((LinearLayout)mView.findViewById( R.id.button_container )).removeView( container.findViewById( R.id.settings ) ); // no settings in service
         
         // arrange buttons
         Keys.applyButtons( settings, mView, c, longpress, touch, true );
@@ -270,8 +271,7 @@ public class SoftKeysService extends Service {
         
         if( settings.getBoolean( "service_no_background", false ) ) {
             // make button container transparent
-            ((LinearLayout)mView.findViewById( R.id.button_container )).setBackgroundResource( 0 );
-            ((LinearLayout)mView.findViewById( R.id.button_container )).setPadding( 0, 0, 0, 0 );
+            recursivelyBlank( container );
         }
         
         // Put together the popper
@@ -436,5 +436,22 @@ public class SoftKeysService extends Service {
         
         // need to create an animation controller since its empty by default and the animation doesn't work
         ((ViewGroup)v).setLayoutAnimation( new LayoutAnimationController( alpha, 0 ) );
+    }
+    
+    private void recursivelyBlank( View v ) {
+        // we walk this view and children and keep removing backgrounds and padding until we hit
+        if( v instanceof ImageButton ) {
+            return;
+        }
+        
+        v.setBackgroundColor( 0 );
+        v.setPadding( 0, 0, 0, 0 );
+        
+        if( v instanceof ViewGroup ) {
+            ViewGroup g = (ViewGroup)v;
+            for( int i = 0; i < g.getChildCount(); i++ ) {
+                recursivelyBlank( g.getChildAt( i ) );
+            }
+        }
     }
 }
