@@ -9,6 +9,7 @@
     <string name="quickdoc_exit">Close</string>
 
     <string name="pref_category_service_title">SoftKeys Service</string>
+    <string name="pref_category_service_summary">Configure the On Screen Service Behavior</string>
     <string name="pref_service_title">Run Service</string>
     <string name="pref_service_summary_on">Run SoftKeys Service</string>
     <string name="pref_service_summary_off">Just Use SoftKeys Launcher</string>
@@ -29,6 +30,7 @@
     <string name="pref_service_no_background_summary_off">Normal Background Containing Buttons</string>
     
     <string name="pref_category_virtual_title">Virtual Home Button</string>
+    <string name="pref_category_virtual_summary">Select Launcher</string>
     <string name="pref_launcher_title">Normal Press</string>
     <string name="pref_launcher_summary">Choose Launcher for Normal Press</string>
     <string name="pref_launcher2_title">Long Press</string>
@@ -38,6 +40,7 @@
     <string name="pref_return_home_after_back_summary_off">Do Not Return to SoftKeys After Back Key</string>
     
     <string name="pref_category_physical_title">Physical Home Button</string>
+    <string name="pref_category_physical_summary">Configure Behavior of Physical Device Home Button</string>
     <string name="pref_physical_note_title">NOTE:</string>    
     <string name="pref_physical_note_summary">For Single/Double Press While SoftKeys is Open</string>
     <string name="pref_homebutton_title">Single Press</string>
@@ -60,6 +63,7 @@
     <string name="pref_help_summary">View Included Help</string>
     
     <string name="pref_category_visual_title">Visuals and Layout</string>
+    <string name="pref_category_visual_summary">Choose Theme and Customize Button Setup</string>
     <string name="pref_theme_title">Theme</string>
     <string name="pref_theme_summary">Select Theme</string>
     <string name="pref_exitbutton_title">Exit Button</string>
@@ -90,7 +94,8 @@
     <string name="pref_recent_apps_summary_on">Show Recent Apps</string>
     <string name="pref_recent_apps_summary_off">Hide Recent Apps</string>
 
-    <string name="pref_notification_bar_title">Notification Bar</string>
+    <string name="pref_category_notification_bar_title">Notification Bar</string>
+    <string name="pref_category_notification_bar_summary">Put SoftKeys in the Notification Bar</string>
     <string name="pref_nb_softkeys_title">SoftKeys Button</string>
     <string name="pref_nb_softkeys_summary_on">Show SoftKeys Button</string>
     <string name="pref_nb_softkeys_summary_off">Do Not Show SoftKeys Button</string>

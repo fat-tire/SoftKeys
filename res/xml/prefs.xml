@@ -18,8 +18,9 @@
 
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-   <PreferenceCategory
-   		android:title="@string/pref_category_service_title">
+   <PreferenceScreen
+   		android:title="@string/pref_category_service_title"
+   		android:summary="@string/pref_category_service_summary">
 
 		        <CheckBoxPreference
 		                        android:title="@string/pref_service_title"
@@ -77,10 +78,11 @@
 		                        android:key="service_no_background"
 		                        />
 		            
-	</PreferenceCategory>
+	</PreferenceScreen>
 	
-   <PreferenceCategory
-   		android:title="@string/pref_category_virtual_title">
+   <PreferenceScreen
+   		android:title="@string/pref_category_virtual_title"
+   		android:summary="@string/pref_category_virtual_summary">
                         
                 <ListPreference
                         android:title="@string/pref_launcher_title"
@@ -102,10 +104,11 @@
 		                        />
 		                        
 
-   </PreferenceCategory>
+   </PreferenceScreen>
    
-   <PreferenceCategory
-   		android:title="@string/pref_category_physical_title">
+   <PreferenceScreen
+   		android:title="@string/pref_category_physical_title"
+   		android:summary="@string/pref_category_physical_summary">
    		<!-- 
                  <Preference
                         android:title="@string/pref_physical_note_title"
@@ -149,10 +152,12 @@
                         android:defaultValue="200"
                          />
 
-        </PreferenceCategory>
+        </PreferenceScreen>
         
-   		<PreferenceCategory
-   			android:title="@string/pref_category_visual_title">
+        
+   		<PreferenceScreen
+   			android:title="@string/pref_category_visual_title"
+   			android:summary="@string/pref_category_visual_summary">
                         
                 <ListPreference
                         android:title="@string/pref_theme_title"
@@ -212,10 +217,11 @@
                  <ListPreference android:title="@string/pref_order_search_title" android:summary="@string/pref_order_search_summary" android:key="order_search" android:entries="@array/orderValues" android:entryValues="@array/orderValues" android:defaultValue="4" />
 				</PreferenceScreen>
 				
-        </PreferenceCategory>
+        </PreferenceScreen>
         
-        <PreferenceCategory
-        	android:title="@string/pref_notification_bar_title">
+        <PreferenceScreen
+        	android:title="@string/pref_category_notification_bar_title"
+        	android:summary="@string/pref_category_notification_bar_summary">
 		        <CheckBoxPreference
 		                        android:title="@string/pref_nb_softkeys_title"
 		                        android:summaryOn="@string/pref_nb_softkeys_summary_on"
@@ -252,7 +258,7 @@
 		                        android:defaultValue="false"
 		                        android:key="nb_search"
 		                        />
-        </PreferenceCategory>
+        </PreferenceScreen>
         
         <PreferenceCategory
         	android:title="@string/pref_category_info_title">
