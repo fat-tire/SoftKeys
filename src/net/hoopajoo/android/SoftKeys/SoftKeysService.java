@@ -44,6 +44,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 public class SoftKeysService extends Service {
+    private InputSmoother i;
     private View mView;
     private View mBumpView;
     private boolean auto_hide;
@@ -169,8 +170,11 @@ public class SoftKeysService extends Service {
                         mDraggingView = true;
                         mDidDrag = true;
 
-                        int currX = (int)me.getRawX();
-                        int currY = (int)me.getRawY(); 
+                        i.addPoint( (int)me.getRawX(), (int)me.getRawY() );
+                        i.updateOutliers();
+                        int[] pts = i.getCurrent();
+                        int currX = pts[ 0 ];
+                        int currY = pts[ 1 ];                     
                         
                         // make our deltas work relative to movement, y
                         int dx = currX - mDraggingOrigX;
@@ -215,6 +219,7 @@ public class SoftKeysService extends Service {
                         
                         WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
                         wm.updateViewLayout( root, l );
+                                         
                         return( true );
                     }
                 }
@@ -300,6 +305,8 @@ public class SoftKeysService extends Service {
         wm.addView( mBumpView, makeOverlayParams() );
         wm.addView( mView, makeOverlayParams() );
 
+        i = new InputSmoother( 5 );
+        
         initOrientation();
     }
 
