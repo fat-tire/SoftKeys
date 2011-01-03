@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import android.util.Log;
+
 // keeps a list of points to drop outliers that make your drag jitter
 public class InputSmoother {
     private List<PointCheck> mPoints = new ArrayList<PointCheck>();
@@ -35,6 +37,7 @@ public class InputSmoother {
     
     public void addPoint( int x, int y ) {
         PointCheck p = new PointCheck();
+        //Log.d( "Smoother", "adding points: " + x + ", " + y );
         p.x = x;
         p.y = y;
         mPoints.add( p );

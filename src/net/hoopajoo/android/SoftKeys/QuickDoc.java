@@ -49,8 +49,8 @@ public class QuickDoc extends Activity {
         if( i != null ) {
             Bundle ex = i.getExtras();
             String type = ex.getString( "type" );
-            if( type.equals( "getting_started" ) ) {
-                url += "getting_started.html";
+            if( type.equals( "whats_new" ) ) {
+                url += "whats_new.html";
             }else if( type.equals( "help" ) ) {
                 url += "help.html"; 
             }else{

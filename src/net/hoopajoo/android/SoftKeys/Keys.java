@@ -30,6 +30,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
@@ -362,10 +363,17 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         }
  
         // what's new/getting started?
-        int force_level = 2010122701;
+        int force_level = 0;
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo( getPackageName(), 0 );
+            force_level = info.versionCode;
+        }catch( Exception e ) {
+            
+        }
+        d( "Updating last version code: " + force_level );
         if( settings.getInt( "last_intro_level", 0 ) < force_level ) {
             Intent intent = new Intent( this, QuickDoc.class );
-            intent.putExtra( "type", "getting_started" );
+            intent.putExtra( "type", "whats_new" );
             startActivity( intent );
             SharedPreferences.Editor e = settings.edit();
             e.putInt( "last_intro_level", force_level );
