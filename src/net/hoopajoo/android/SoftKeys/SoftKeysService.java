@@ -108,7 +108,7 @@ public class SoftKeysService extends Service {
             }
         };
         
-        OnLongClickListener longpress = new OnLongClickListener() {
+        OnLongClickListener longpress_rotate = new OnLongClickListener() {
             @Override
             public boolean onLongClick( View v ) {
                 if( mDraggingView || mDidDrag ) {
@@ -267,10 +267,11 @@ public class SoftKeysService extends Service {
         ((LinearLayout)mView.findViewById( R.id.button_container )).removeView( container.findViewById( R.id.settings ) ); // no settings in service
         
         // arrange buttons
-        Keys.applyButtons( settings, mView, c, longpress, touch, true );
+        Keys.applyButtons( settings, mView, c, null, touch, true );
         mView.setVisibility( View.INVISIBLE );
         mView.setOnTouchListener( touch );
-        mView.setOnLongClickListener( longpress );
+        mView.setOnLongClickListener( longpress_rotate );
+        mView.findViewById(  R.id.exit ).setOnLongClickListener( longpress_rotate );
         
         applyTransparency( mView, settings.getInt( "service_transparency", 0 ) );
         

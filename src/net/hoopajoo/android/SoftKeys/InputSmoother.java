@@ -50,10 +50,29 @@ public class InputSmoother {
         for( PointCheck p : mPoints ) {
             p.outlier = false;
         }
-     
+
+        // currently this just checks to see if we delta'd farther than 10 pixels,
+        // it would be nice to add something smarter like curve fitting someday
+        // but it probably doesn't matter
+        int lastx = mPoints.get( 0 ).x;
+        int lasty = mPoints.get( 0 ).y;
+        
+        for( PointCheck p : mPoints ) {
+            if( Math.abs( lastx - p.x ) > 10 ) {
+                p.outlier = true;
+            }
+            if( Math.abs( lasty - p.y ) > 10 ) {
+                p.outlier = true;
+            }
+            lastx = p.x;
+            lasty = p.y;
+        }
+        
         // set current as the last non-outlier
         mCurrent = null;
-        for( PointCheck p : new ListReverser<PointCheck>( mPoints ) ) {
+        for( int i = mPoints.size() - 1; i >= 0; i-- ) {
+            PointCheck p = mPoints.get( i ); 
+                    
             if( mCurrent != null ) {
                 if( p.outlier == false ) {
                     mCurrent = p;
@@ -78,32 +97,5 @@ public class InputSmoother {
         public int x;
         public int y;
         public boolean outlier;
-    }
-    
-    class ListReverser<T> implements Iterable<T> {
-        private ListIterator<T> listIterator;        
-
-        public ListReverser(List<T> wrappedList) {
-            this.listIterator = wrappedList.listIterator(wrappedList.size());            
-        }               
-
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-
-                public boolean hasNext() {
-                    return listIterator.hasPrevious();
-                }
-
-                public T next() {
-                    return listIterator.previous();
-                }
-
-                public void remove() {
-                    listIterator.remove();
-                }
-
-            };
-        }
-
     }
 }
