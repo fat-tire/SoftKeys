@@ -54,17 +54,17 @@ public class InputSmoother {
             p.outlier = false;
         }
 
-        // currently this just checks to see if we delta'd farther than 10 pixels,
+        // currently this just checks to see if we delta'd farther than 100 pixels,
         // it would be nice to add something smarter like curve fitting someday
         // but it probably doesn't matter
         int lastx = mPoints.get( 0 ).x;
         int lasty = mPoints.get( 0 ).y;
         
         for( PointCheck p : mPoints ) {
-            if( Math.abs( lastx - p.x ) > 10 ) {
+            if( Math.abs( lastx - p.x ) > 100 ) {
                 p.outlier = true;
             }
-            if( Math.abs( lasty - p.y ) > 10 ) {
+            if( Math.abs( lasty - p.y ) > 100 ) {
                 p.outlier = true;
             }
             lastx = p.x;

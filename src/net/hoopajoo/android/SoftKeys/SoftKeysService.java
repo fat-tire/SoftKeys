@@ -44,17 +44,19 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 public class SoftKeysService extends Service {
-    private InputSmoother i;
+    private InputSmoother mInputSmoother;
     private View mView;
     private View mBumpView;
     private boolean auto_hide;
     private boolean auto_hide_after_back;
     private boolean mDraggingView;
+    private View mDraggingViewObj;
     private int mDraggingOrigX, mDraggingOrigY;
     private int mDraggingViewX, mDraggingViewY;
     private boolean mDidDrag;
     private int mNumDrags;
     private OrientationEventListener mOrientation;
+    private Runnable mUpdateDrag;
     
     private final int mOffScreenMax = 20;
     
@@ -132,6 +134,8 @@ public class SoftKeysService extends Service {
             @Override
             public boolean onTouch(View view, MotionEvent me) {
                 if (me.getAction() == MotionEvent.ACTION_DOWN) {
+                    mInputSmoother = new InputSmoother( 5 );
+                    
                     mDraggingOrigX = (int)me.getRawX();
                     mDraggingOrigY = (int)me.getRawY();
                     
@@ -156,6 +160,9 @@ public class SoftKeysService extends Service {
                     mDraggingView = false;
                     
                     if( mDidDrag ) {
+                        // always final update
+                        mUpdateDrag.run();
+                        
                         // save x/y
                         savePosition();
 
@@ -167,66 +174,77 @@ public class SoftKeysService extends Service {
                                  // you're just tapping buttons it doesn't drag too by accident
                     
                     if( mNumDrags > 2 ) {
+                        mDraggingViewObj = view;
                         mDraggingView = true;
                         mDidDrag = true;
 
-                        i.addPoint( (int)me.getRawX(), (int)me.getRawY() );
-                        i.updateOutliers();
-                        int[] pts = i.getCurrent();
-                        int currX = pts[ 0 ];
-                        int currY = pts[ 1 ];                     
+                        mInputSmoother.addPoint( (int)me.getRawX(), (int)me.getRawY() );
+                        mInputSmoother.updateOutliers();
                         
-                        // make our deltas work relative to movement, y
-                        int dx = currX - mDraggingOrigX;
-                        int dy = currY - mDraggingOrigY;
-                        
-                        //d( "dx: " + dx );
-                        //d( "dy: " + dy );
-                        
-
-                        View root = view.getRootView();                        
-                        WindowManager.LayoutParams l = (WindowManager.LayoutParams)root.getLayoutParams();
-                        //d( "x: " + l.x );
-                        //d( "y: " + l.y );
-                        //d( "grav: " + l.gravity );
-                        int width = root.getWidth();
-                        int height = root.getHeight();
-                        
-                        //l.gravity = Gravity.NO_GRAVITY;
-                        //l.gravity = Gravity.TOP | Gravity.LEFT;
-                        //l.x += dx;
-                        //l.y += dy;
-                        
-                        l.x = mDraggingViewX + dx;
-                        l.y = mDraggingViewY + dy;
-                        
-                        // contraints
-                        if( l.x < ( mOffScreenMax * -1 ) ) {
-                            l.x = mOffScreenMax * -1;
-                        }
-                        
-                        if( l.x + width > mScreenWidth + mOffScreenMax ) {
-                            l.x = mScreenWidth + mOffScreenMax - width;
-                        }
-                        
-                        if( l.y < ( mOffScreenMax * -1 ) ) {
-                            l.y = mOffScreenMax * -1;
-                        }
-                        
-                        if( l.y + height > mScreenHeight + mOffScreenMax ) {
-                            l.y = mScreenHeight + mOffScreenMax - height;
-                        }
-                        
-                        WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
-                        wm.updateViewLayout( root, l );
-                                         
-                        return( true );
+                        //view.removeCallbacks( mUpdateDrag );
+                        view.post( mUpdateDrag );
+                        return( false );
                     }
                 }
                 return false;
             }
         };
 
+        // run this at move and end touch to make sure we anchor in the right spot
+        mUpdateDrag = new Runnable() {
+            @Override
+            public void run() {
+                int[] pts = mInputSmoother.getCurrent();
+                int currX = pts[ 0 ];
+                int currY = pts[ 1 ];                     
+                
+                // make our deltas work relative to movement, y
+                int dx = currX - mDraggingOrigX;
+                int dy = currY - mDraggingOrigY;
+                
+                //d( "dx: " + dx );
+                //d( "dy: " + dy );
+                
+                View root = mDraggingViewObj.getRootView(); 
+                WindowManager.LayoutParams l = (WindowManager.LayoutParams)root.getLayoutParams();
+                //d( "x: " + l.x );
+                //d( "y: " + l.y );
+                //d( "grav: " + l.gravity );
+                int width = root.getWidth();
+                int height = root.getHeight();
+                
+                //l.gravity = Gravity.NO_GRAVITY;
+                //l.gravity = Gravity.TOP | Gravity.LEFT;
+                //l.x += dx;
+                //l.y += dy;
+                
+                int finalx = mDraggingViewX + dx;
+                int finaly = mDraggingViewY + dy;
+                
+                // contraints
+                if( finalx < ( mOffScreenMax * -1 ) ) {
+                    finalx = mOffScreenMax * -1;
+                }
+                
+                if( finalx + width > mScreenWidth + mOffScreenMax ) {
+                    finalx = mScreenWidth + mOffScreenMax - width;
+                }
+                
+                if( finaly < ( mOffScreenMax * -1 ) ) {
+                    finaly = mOffScreenMax * -1;
+                }
+                
+                if( finaly + height > mScreenHeight + mOffScreenMax ) {
+                    finaly = mScreenHeight + mOffScreenMax - height;
+                }
+                
+                l.x = finalx;
+                l.y = finaly;
+                WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
+                wm.updateViewLayout( root, l );
+            }
+        };
+        
         // get our root (don't go through theme handler, this comes from the main app always)
         LayoutInflater l = LayoutInflater.from( this );
         mView = l.inflate( R.layout.service, null );
@@ -305,8 +323,6 @@ public class SoftKeysService extends Service {
         WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
         wm.addView( mBumpView, makeOverlayParams() );
         wm.addView( mView, makeOverlayParams() );
-
-        i = new InputSmoother( 5 );
         
         initOrientation();
     }
