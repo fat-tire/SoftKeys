@@ -195,7 +195,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     Toast.makeText( this, "Failed to find file: " + name + ", SoftKeys may not function", Toast.LENGTH_LONG ).show();                    
                 }
             }catch( Exception e ) {
-                Toast.makeText( this, "Failed to check for file: " + name, Toast.LENGTH_LONG ).show();
+                Toast.makeText( this, "Unable to check for file: " + name, Toast.LENGTH_LONG ).show();
             }
                 
         }
@@ -406,6 +406,14 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
     public void onNewIntent( Intent i ) {
         Globals app = (Globals)getApplication();
         
+        // if first run and intent is home then don't run normal home stuff
+        if( app.firstRun ) {
+            if( i.hasCategory( Intent.CATEGORY_HOME ) ) {
+                app.firstRun = false;
+                return;
+            }
+        }
+            
         ///////// TODO: remove null junk
         
         // handle real actions
@@ -461,29 +469,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     this.finish();
                 }
             }
-        }
-
-                       
-                /*
-                // old home counter stuff
-                //d( "homecounter: " + app.homeCounter );
-                if( app.homeCounter != 0 ) {
-                    // they whacked home again
-                    
-                    // if 2clicker waiting then do 2clicker action
-                    if( app.homeCounter > 1 ) {
-                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-                        clear_delayed_home();
-                        home_key_action( settings.getString( "homebuttonmulti", "launcher" ) );                
-                    }else{
-                        // queue up an exit, if this timer doesn't finish before we come up again we'll run double-click instead
-                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-                        post_delayed_home( settings.getString(  "homebutton", "exit" ) );                        
-                    }
-                }
-                */
-            
-        
+        }        
     }
 
     // calling this will run the desired home action in the specified time unless canceled by

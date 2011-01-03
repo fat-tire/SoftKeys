@@ -34,6 +34,7 @@ public class Globals extends Application {
     public boolean restartKeys = false;
     public int homeCounter = 0;
     public boolean didInitNotifications = false;
+    public boolean firstRun = true;
     
     public CommandShell getCommandShell() throws Exception {
         if( cmd == null ) {
