@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.Bitmap.Config;
 import android.graphics.Shader.TileMode;
@@ -91,7 +92,7 @@ public class Generator {
         if( d != null ) {
             // resize?
             if( theme.getBoolean( new String[] { prefix + "_resize_background", "resize_background" } ) ) {
-                d = resizeImage( d, iconSize, iconSize );
+                d = resizeImage( d, 0, iconSize );
             }
             
             applyTiling( d, theme.getString( new String[] {
@@ -140,10 +141,29 @@ public class Generator {
                     break;
             }
             
-            ImageButton b = (ImageButton)theme.inflateLayout( c,
+            // This allows complex view overriding like the button container
+            // the final view we settle on must be an ImageButton (either specified by the
+            // theme or just the root element of the xml)
+            View orig_b = theme.inflateLayout( c,
                     new String[] { prefix + "_button_" + name, 
                             prefix + "_button", "button_" + name, "button" }
                 , container, false );
+            
+            String button_name = theme.getString( new String[] {
+                    prefix + "_button_id",
+                    "button_id"
+            } );
+            
+            ImageButton b = null;
+            if( button_name != null ) {
+                b = (ImageButton)orig_b.findViewById( theme.getId(
+                        new String[] { button_name } ) );                
+            }
+            
+            if( b == null ) {
+                b = (ImageButton)orig_b;
+            }
+            
             b.setId( i );
             
             // Add our images at the size we want
@@ -170,7 +190,7 @@ public class Generator {
                         prefix + "_resize_button_background", 
                         "resize_button_background_" + name,
                         "resize_button_background" } ) ) {
-                    d = resizeImage( d, iconSize, iconSize );
+                    d = resizeImage( d, 0, iconSize );
                 }
 
                 applyTiling( d, theme.getString( new String[] {
@@ -183,7 +203,7 @@ public class Generator {
                 b.setBackgroundDrawable( d );
             }
             
-            container.addView( b );
+            container.addView( orig_b );
         }
         
         // add to root
@@ -216,12 +236,21 @@ public class Generator {
         int width = b.getWidth();
         int height = b.getHeight();
 
+        // if w/h is zero them it means to scale based on the non-zero one and
+        // maintain aspect
+        if( w == 0 ) {
+            w = (int)((float)h * width / height);
+        }else if( h == 0 ) {
+            h = (int)((float)w * height / width);            
+        }
+        
         float scaleWidth = ((float) w) / width;
         float scaleHeight = ((float) h) / height;
         Matrix matrix = new Matrix();
         matrix.postScale( scaleWidth, scaleHeight);
 
         BitmapDrawable ret = new BitmapDrawable( Bitmap.createBitmap(b, 0, 0, width, height, matrix, true) );
+
         // copy tile mode
         if( d instanceof BitmapDrawable ) {
             ret.setTileModeXY( ( (BitmapDrawable)d ).getTileModeX(), ( (BitmapDrawable)d ).getTileModeY() );
