@@ -271,7 +271,7 @@ public class SoftKeysService extends Service {
         ((LinearLayout)mView.findViewById( R.id.button_container )).removeView( container.findViewById( R.id.settings ) ); // no settings in service
         
         // arrange buttons
-        Keys.applyButtons( settings, mView, c, null, touch, true );
+        Keys.applyButtons( settings, mView, c, lc, touch, true );
         mView.setVisibility( View.INVISIBLE );
         mView.setOnTouchListener( touch );
         mView.setOnLongClickListener( longpress_rotate );
