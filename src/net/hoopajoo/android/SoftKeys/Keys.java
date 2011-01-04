@@ -503,7 +503,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         List<Integer> keyids = new ArrayList<Integer>();
         switch( id ) {
             case R.id.back:
-                keyids.add( 4 );
+                keyids.add( K.KEYID_BACK );
                 break;
             
             case R.id.home:
@@ -517,11 +517,11 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                 return true;
                 
             case R.id.menu:
-                keyids.add( 82 );
+                keyids.add( K.KEYID_MENU );
                 break;
                 
             case R.id.search:
-                keyids.add( 84 );
+                keyids.add( K.KEYID_SEARCH );
                 break;
             
             case R.id.exit:
@@ -536,12 +536,12 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         // if longclick then add another back, e.g. for apps that do something odd like pause when you
         // open another app, so you can back out of that then send the intended key
         if( longClick ) {
-            keyids.add( 0, 4  );
+            keyids.add( 0, K.KEYID_BACK );
         }
  
         if( backout ) {
             // if we need to back out of softkeys before we send the other keys
-            keyids.add( 0, 4  );
+            keyids.add( 0, K.KEYID_BACK );
         }
         
         ((Globals)getApplication()).sendKeys( keyids );
