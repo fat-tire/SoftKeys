@@ -20,6 +20,7 @@ package net.hoopajoo.android.SoftKeys;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,47 +58,31 @@ import android.widget.ImageButton;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-// this is just a stub to handle intent calls
-public class SendInput extends Activity {
-    public static String ACTION_CODE = "net.hoopajoo.android.SoftKeys.KEY_CODE";
-
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        onNewIntent( getIntent() );
+// Key constants and resolver maps
+public class K {
+    public static String KEY_HOME = "home";
+    public static String KEY_BACK = "back";
+    public static String KEY_MENU = "menu";
+    public static String KEY_SEARCH = "search";
+    
+    public static int KEYID_HOME = 0;
+    public static int KEYID_BACK = 4;
+    public static int KEYID_MENU = 82;
+    public static int KEYID_SEARCH = 84;
+    
+    private static final Map<String,Integer> mKeymap;
+    static {
+        Map<String,Integer> t = new HashMap<String,Integer>();
+        t.put( KEY_BACK, KEYID_BACK );
+        t.put( KEY_MENU, KEYID_MENU );
+        t.put( KEY_SEARCH, KEYID_SEARCH );
+        mKeymap = Collections.unmodifiableMap( t );
     }
     
-    @Override
-    public void onNewIntent( Intent i ) {
-        Globals app = (Globals)getApplication();
-        
-        String action = i.getAction();
-        if( action.equals(  ACTION_CODE ) ) {
-            // by key name?
-            int keyid = 0;
-            Bundle e = i.getExtras();
-            boolean longClick = e.getBoolean( "longclick", false );
-            if( e.getString( "keyname" ) != null ) {
-                String key = e.getString( "keyname" );
-                if( key.equals( "home" ) ) {
-                    ((Globals)getApplication()).doHomeAction( longClick );
-                    return;
-                }else{
-                    // run through resolver
-                    keyid = K.keyNameToId( key );
-                }
-            }else if( e.getInt( "keyid", 0 ) != 0 ) {
-                keyid = e.getInt( "keyid", 0 );
-            }
-
-            if( keyid != 0 ) {
-                ((Globals)getApplication()).sendKeys( new int[] { keyid } );
-            }
-            
-            // todo: make me a broadcast receiver.. or maybe this should be removed all together?
-            // any good reasons to allow other apps to call hw keys?
-            this.finish();       
+    public static int keyNameToId( String n ) {
+        if( ! mKeymap.containsKey( n ) ) {
+            return 0;
         }
+        return mKeymap.get( n );
     }
 }
