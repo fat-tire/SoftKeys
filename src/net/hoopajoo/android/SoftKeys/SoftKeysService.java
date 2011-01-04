@@ -181,14 +181,18 @@ public class SoftKeysService extends Service {
 
                         // note: input smoother has no effect on the nook, something else is
                         // causing the jitters, I'm guessing we need to lock something when
-                        // we update the params
+                        // we update the params.  I've done a lot of testing and even when the
+                        // service window jumps to the wierd position the finalxy updates in the
+                        // log are not in a weird spot.  After looking through a lot of aosp code
+                        // I can't find any place we can lock and force the update in a synchonized way
+                        // 
+                        // the error seems to happen when you roll your finger, so it feels like
+                        // it has something to do with the amount of surface area you have on the
+                        // display, and changing that causes stuff to somehow "reset" the layoutparams
                         mInputSmoother.addPoint( (int)me.getRawX(), (int)me.getRawY() );
                         mInputSmoother.updateOutliers();
                         
-                        if( ! mPendingDragEvent ) {
-                            mPendingDragEvent = true;
-                            view.postDelayed( mUpdateDrag, 50 );
-                        }
+                        view.post( mUpdateDrag );
                         return( false );
                     }
                 }
@@ -244,10 +248,11 @@ public class SoftKeysService extends Service {
                     finaly = mScreenHeight + mOffScreenMax - height;
                 }
                 
-                d( "Final xy: " + finalx + "," + finaly );
+                //d( "Final xy: " + finalx + "," + finaly );
                 
                 l.x = finalx;
                 l.y = finaly;
+                
                 WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
                 wm.updateViewLayout( root, l );
                 
