@@ -190,19 +190,6 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
 
         setContentView( R.layout.main );
         
-        // warn if we don't notice some binaries we need
-        for( String name : new String[] { "/system/bin/su", "/system/bin/input" } ) {
-            File check = new File( name );
-            try {
-                if( ! check.exists() ) {
-                    Toast.makeText( this, "Failed to find file: " + name + ", SoftKeys may not function", Toast.LENGTH_LONG ).show();                    
-                }
-            }catch( Exception e ) {
-                Toast.makeText( this, "Unable to check for file: " + name, Toast.LENGTH_LONG ).show();
-            }
-                
-        }
-        
         // long click outside buttons == config
         View main = findViewById( R.id.main_view );
         main.setLongClickable( true );

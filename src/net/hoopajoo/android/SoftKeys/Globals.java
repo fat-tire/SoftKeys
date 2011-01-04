@@ -69,6 +69,7 @@ public class Globals extends Application {
         return sendKeys( listToInt( a ) );
     }
     
+    // TODO: replace this with monkey script, then we can do longpresses
     public int sendKeys( int[] keyids ) {
         try {
             Globals.CommandShell cmd = getCommandShell();
@@ -91,7 +92,11 @@ public class Globals extends Application {
             }
             
             // source the file since datadata might be noexec
-            String keyid = "";
+            StringBuilder keyid = new StringBuilder();
+            for( int i = 0; i < keyids.length; i++ ) {
+                keyid.append( " " );
+                keyid.append( keyids[ i ] );
+            }
             cmd.system( "sh " + script.getAbsolutePath() + " " + keyid );            
         }catch( Exception e ) {
             Log.e( LOG, "Error: " + e.getMessage() );

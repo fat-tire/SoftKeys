@@ -387,32 +387,29 @@ public class SoftKeysService extends Service {
         
     }
     
-    private boolean genericClick( View v, boolean longclick) {
+    private boolean genericClick( View v, boolean longClick) {
         // send an intent to the main window
-        Intent i = null;
+        int keyid = 0;
+        Globals app = (Globals)getApplication();
         boolean hide = auto_hide;
         switch( v.getId() ) {
             case R.id.home:
-                i = new Intent( SendInput.ACTION_CODE );
-                i.putExtra( "keyname", "home" );
+                app.doHomeAction( longClick );
                 break;
                 
             case R.id.back:
-                i = new Intent( SendInput.ACTION_CODE );
-                i.putExtra( "keyname", "back" );
+                keyid = K.KEYID_BACK;
                 if( hide ) {
                     hide = auto_hide_after_back;
                 }
                 break;
                 
             case R.id.menu:
-                i = new Intent( SendInput.ACTION_CODE );
-                i.putExtra( "keyname", "menu" );
+                keyid = K.KEYID_MENU;
                 break;
                 
             case R.id.search:
-                i = new Intent( SendInput.ACTION_CODE );
-                i.putExtra( "keyname", "search" );
+                keyid = K.KEYID_SEARCH;
                 break;
                 
             case R.id.exit:
@@ -420,12 +417,8 @@ public class SoftKeysService extends Service {
                 break;
         }
         
-        if( i != null ) {
-            i.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-            i.putExtra( "long", longclick );
-            
-            //i.setClass( v.getContext(), Keys.class );
-            v.getContext().startActivity( i );
+        if( keyid != 0 ) {
+            app.sendKeys( new int[] { keyid } );
         }
         
         if( hide ) {
