@@ -20,8 +20,12 @@ package net.hoopajoo.android.SoftKeys;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -69,12 +73,8 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
     private Runnable delayed_pretap_action ;
     private String homeaction;
     private int delayed_action_time;
-    
-    public static String ACTION_MENU = "net.hoopajoo.android.SoftKeys.KEY_MENU";
-    public static String ACTION_HOME = "net.hoopajoo.android.SoftKeys.KEY_HOME";
-    public static String ACTION_BACK = "net.hoopajoo.android.SoftKeys.KEY_BACK";
-    public static String ACTION_SEARCH = "net.hoopajoo.android.SoftKeys.KEY_SEARCH";
-    
+
+
     // simple typedef used to make the notifications a bit more generic
     private class NotificationButton {
         String mPrefKey;
@@ -83,18 +83,20 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         Drawable mIcon;
         String mButtonText;
         String mAction;
+        String mExtraString;
 
-        NotificationButton( String text, String pref, RemoteViews view, Drawable d, int icon, String act ) {
+        NotificationButton( String text, String pref, RemoteViews view, Drawable d, int icon, String act, String extra ) {
             mButtonText = text;
             mPrefKey = pref;
             mView = view;
             mIconId = icon;
             mIcon = d;
             mAction = act;
+            mExtraString = extra;
         }
 
         NotificationButton( String text, String pref, int icon, String act ) {
-            this( text, pref, null, null, icon, act );
+            this( text, pref, null, null, icon, act, null );
         }
 
     }
@@ -261,29 +263,29 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     theme.getRemoteViews( new String[] { "notification_menu" } ),
                     theme.getDrawable(  new String[] { "notification_menu" }  ),
                     R.drawable.button_menu,
-                    ACTION_MENU );
+                    SendInput.ACTION_CODE, "menu" );
             nb[ 2 ] = new NotificationButton( "Home", "nb_home", 
                     theme.getRemoteViews( new String[] { "notification_home" } ), 
                     theme.getDrawable(  new String[] { "notification_home" }  ),
                     R.drawable.button_home,
-                    ACTION_HOME );
+                    SendInput.ACTION_CODE, "home" );
             nb[ 3 ] = new NotificationButton( "Back", "nb_back",
                     theme.getRemoteViews( new String[] { "notification_back" } ), 
                     theme.getDrawable(  new String[] { "notification_back" }  ),
                     R.drawable.button_back,
-                    ACTION_BACK );
+                    SendInput.ACTION_CODE, "back" );
             nb[ 4 ] = new NotificationButton( "Search", "nb_search",
                     theme.getRemoteViews( new String[] { "notification_search" } ), 
                     theme.getDrawable(  new String[] { "notification_search" }  ),
                     R.drawable.button_search,
-                    ACTION_SEARCH );
+                    SendInput.ACTION_CODE, "back" );
             
             for( NotificationButton b : nb ) {
                 if( settings.getBoolean( b.mPrefKey, false ) ) {
                     Notification n = new Notification( b.mIconId, null, 0 );
-                    PendingIntent i = PendingIntent.getActivity( this, 0, 
-                            new Intent( b.mAction,
-                                    null, this, Keys.class ), 0 );
+                    Intent si = new Intent( b.mAction );
+                    si.putExtra( "keyname", b.mExtraString );
+                    PendingIntent i = PendingIntent.getActivity( this, 0, si, 0 );
                     
                     // if we got a drawable but no view then set up our own remote view
                     // and add in their drawable
@@ -370,7 +372,8 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         }catch( Exception e ) {
             
         }
-        d( "Updating last version code: " + force_level );
+        
+        //d( "Updating last version code: " + force_level );
         if( settings.getInt( "last_intro_level", 0 ) < force_level ) {
             Intent intent = new Intent( this, QuickDoc.class );
             intent.putExtra( "type", "whats_new" );
@@ -419,33 +422,6 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             if( i.hasCategory( Intent.CATEGORY_HOME ) ) {
                 app.firstRun = false;
                 return;
-            }
-        }
-            
-        ///////// TODO: remove null junk
-        
-        // handle real actions
-        if( i != null ) {
-            String action = i.getAction();
-            if( action != null ) {
-                int clickbutton = 0;
-                if( action.equals( ACTION_MENU  ) ) {
-                    clickbutton = R.id.menu;
-                }
-                if( action.equals( ACTION_HOME  ) ) {
-                    clickbutton = R.id.home;
-                }
-                if( action.equals( ACTION_BACK  ) ) {
-                    clickbutton = R.id.back;
-                }
-                if( action.equals( ACTION_SEARCH  ) ) {
-                    clickbutton = R.id.search;
-                }
-                if( clickbutton != 0 ) {
-                    generic_click( clickbutton, false, false );
-                    // don't draw the ui
-                    this.finish();
-                }
             }
         }
         
@@ -524,22 +500,15 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
     }
     
     private boolean generic_click( int id, boolean longClick, boolean backout ) {
-        String keyid = "";
+        List<Integer> keyids = new ArrayList<Integer>();
         switch( id ) {
             case R.id.back:
-                // If backout=true we are in softkeys main ui so honor return to softkeys
-                // by pressing home after this
-                keyid = "4";
+                keyids.add( 4 );
                 break;
             
             case R.id.home:
                 // do whatever is selected
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-                
-                Intent i = new Intent( Intent.ACTION_MAIN );
-                i.setPackage( settings.getString( longClick ? "launcher2" : "launcher" , defaultLauncher ) );
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity( i );
+                ((Globals)getApplication()).doHomeAction( longClick );
                 return true;
                 
             case R.id.main_view:
@@ -548,11 +517,11 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                 return true;
                 
             case R.id.menu:
-                keyid = "82";
+                keyids.add( 82 );
                 break;
                 
             case R.id.search:
-                keyid = "84";
+                keyids.add( 84 );
                 break;
             
             case R.id.exit:
@@ -560,52 +529,33 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                 return true;
           
             default:
-                d( "Unkown click event: " + id );
+                d( "Unknown click event: " + id );
                 return true;
         }
         
+        // if longclick then add another back, e.g. for apps that do something odd like pause when you
+        // open another app, so you can back out of that then send the intended key
+        if( longClick ) {
+            keyids.add( 0, 4  );
+        }
+ 
+        if( backout ) {
+            // if we need to back out of softkeys before we send the other keys
+            keyids.add( 0, 4  );
+        }
+        
+        ((Globals)getApplication()).sendKeys( keyids );
+        
         try {
-            Globals.CommandShell cmd = ((Globals)getApplication()).getCommandShell();
-            
-            // run our key script
-            String wd = getFilesDir().getAbsolutePath();
-
-            // check if we have a dev script
-            File script = new File( wd + "/pushkey.dev" );
-            
-            // check if we have a test script
-            if( script.exists() ) {
-                d( "Using dev key script" );
-            }else{
-                // write out our default script
-                script = new File( wd + "/pushkey" );
-                FileOutputStream out = new FileOutputStream( script );
-                out.write( "for f in $* ; do input keyevent $f ; done\n".getBytes( "ASCII" ) );
-                out.close();
-            }
-            
-            // if longclick then add another back, e.g. for apps that do something odd like pause when you
-            // open another app, so you can back out of that then send the intended key
-            if( longClick ) {
-                keyid = "4 " + keyid;
-            }
-     
-            if( backout ) {
-                // if we need to back out of softkeys before we send the other keys
-                keyid = "4 " + keyid;
-            }
-            
-            // source the file since datadata might be noexec
-            cmd.system( "sh " + script.getAbsolutePath() + " " + keyid );
-            
             // if we sent back, and didn't backout (so it was from main ui) and they
             // want to return, run am to get us back
             if( id == R.id.back && backout && return_after_back ) {
+                Globals.CommandShell cmd = ((Globals)getApplication()).getCommandShell();
                 cmd.system( "am start -a android.intent.action.MAIN -n net.hoopajoo.android.SoftKeys/.Keys" );
             }
         }catch( Exception e ) {
-            Log.e( LOG, "Error: " + e.getMessage() );
-            Toast.makeText( this, "Unable to execute as root", Toast.LENGTH_LONG ).show();
+            // we don't really care if this fails, they should have gotten a shell
+            // error from the sendkeys
         }
         
         return true;

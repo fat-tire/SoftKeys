@@ -71,43 +71,14 @@ public class SoftKeysService extends Service {
         OnClickListener c = new OnClickListener() {
             @Override
             public void onClick( View v ) {
-                // send an intent to the main window
-                Intent i = null;
-                boolean hide = auto_hide;
-                switch( v.getId() ) {
-                    case R.id.home:
-                        i = new Intent( Keys.ACTION_HOME );
-                        break;
-                        
-                    case R.id.back:
-                        i = new Intent( Keys.ACTION_BACK );
-                        if( hide ) {
-                            hide = auto_hide_after_back;
-                        }
-                        break;
-                        
-                    case R.id.menu:
-                        i = new Intent( Keys.ACTION_MENU );
-                        break;
-                        
-                    case R.id.search:
-                        i = new Intent( Keys.ACTION_SEARCH );
-                        break;
-                        
-                    case R.id.exit:
-                        hide = true;
-                        break;
-                }
-                
-                if( i != null ) {
-                    i.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                    i.setClass( v.getContext(), Keys.class );
-                    v.getContext().startActivity( i );
-                }
-                
-                if( hide ) {
-                    toggle_bar();
-                }
+                genericClick( v, false );
+            }
+        };
+        
+        OnLongClickListener lc = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick( View v ) {
+                return genericClick( v, true );
             }
         };
         
@@ -414,6 +385,54 @@ public class SoftKeysService extends Service {
         
         wm.updateViewLayout(mView, params);
         
+    }
+    
+    private boolean genericClick( View v, boolean longclick) {
+        // send an intent to the main window
+        Intent i = null;
+        boolean hide = auto_hide;
+        switch( v.getId() ) {
+            case R.id.home:
+                i = new Intent( SendInput.ACTION_CODE );
+                i.putExtra( "keyname", "home" );
+                break;
+                
+            case R.id.back:
+                i = new Intent( SendInput.ACTION_CODE );
+                i.putExtra( "keyname", "back" );
+                if( hide ) {
+                    hide = auto_hide_after_back;
+                }
+                break;
+                
+            case R.id.menu:
+                i = new Intent( SendInput.ACTION_CODE );
+                i.putExtra( "keyname", "menu" );
+                break;
+                
+            case R.id.search:
+                i = new Intent( SendInput.ACTION_CODE );
+                i.putExtra( "keyname", "search" );
+                break;
+                
+            case R.id.exit:
+                hide = true;
+                break;
+        }
+        
+        if( i != null ) {
+            i.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+            i.putExtra( "long", longclick );
+            
+            //i.setClass( v.getContext(), Keys.class );
+            v.getContext().startActivity( i );
+        }
+        
+        if( hide ) {
+            toggle_bar();
+        }
+        
+        return true;
     }
     
     @Override
