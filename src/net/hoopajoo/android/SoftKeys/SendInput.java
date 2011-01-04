@@ -99,10 +99,13 @@ public class SendInput extends Activity {
                         keyid = mKeymap.get( key );
                     }
                 }
+            }else if( e.getInt( "keyid", 0 ) != 0 ) {
+                keyid = e.getInt( "keyid", 0 );
             }
             
             ((Globals)getApplication()).sendKeys( new int[] { keyid } );
-            // todo: make me a broadcast receiver
+            // todo: make me a broadcast receiver.. or maybe this should be removed all together?
+            // any good reasons to allow other apps to call hw keys?
             this.finish();       
         }
     }
