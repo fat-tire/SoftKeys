@@ -53,6 +53,7 @@ public class SoftKeysService extends Service {
     private View mDraggingViewObj;
     private int mDraggingOrigX, mDraggingOrigY;
     private int mDraggingViewX, mDraggingViewY;
+    private boolean mPendingDragEvent;
     private boolean mDidDrag;
     private int mNumDrags;
     private OrientationEventListener mOrientation;
@@ -178,11 +179,16 @@ public class SoftKeysService extends Service {
                         mDraggingView = true;
                         mDidDrag = true;
 
+                        // note: input smoother has no effect on the nook, something else is
+                        // causing the jitters, I'm guessing we need to lock something when
+                        // we update the params
                         mInputSmoother.addPoint( (int)me.getRawX(), (int)me.getRawY() );
                         mInputSmoother.updateOutliers();
                         
-                        //view.removeCallbacks( mUpdateDrag );
-                        view.post( mUpdateDrag );
+                        if( ! mPendingDragEvent ) {
+                            mPendingDragEvent = true;
+                            view.postDelayed( mUpdateDrag, 50 );
+                        }
                         return( false );
                     }
                 }
@@ -238,10 +244,14 @@ public class SoftKeysService extends Service {
                     finaly = mScreenHeight + mOffScreenMax - height;
                 }
                 
+                d( "Final xy: " + finalx + "," + finaly );
+                
                 l.x = finalx;
                 l.y = finaly;
                 WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
                 wm.updateViewLayout( root, l );
+                
+                mPendingDragEvent = false;
             }
         };
         
