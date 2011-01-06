@@ -27,13 +27,16 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 
 public class QuickDoc extends Activity {    
@@ -60,6 +63,7 @@ public class QuickDoc extends Activity {
         
         WebView mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled( false );
+        mWebView.setWebViewClient( new ViewClient() );
         mWebView.loadUrl( url  );
 
         /*
@@ -77,5 +81,18 @@ public class QuickDoc extends Activity {
  
     public void closeHelp( View v ) {
         this.finish();
+    }
+    
+    /* this fixes the browser opening when you click links */
+    public class ViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if( url.startsWith( "file://" ) ) {
+                return false;
+            }else{
+                startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( url ) ) );
+                return true;
+            }
+        }
     }
 }
