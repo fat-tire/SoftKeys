@@ -216,32 +216,47 @@ public class Generator {
     
     // this will return a new drawable scaled to the new size, so you don't have to mutable the source
     public static Drawable resizeImage( Drawable d, int w, int h) {
-        Bitmap b;
-        if( d instanceof BitmapDrawable ) {
-            // I found that the resources are already bitmapdrawables so we can do this,
-            // I assume it it's not created from a bitmap like it's a shape or something
-            // then this won't work?
-            b = ((BitmapDrawable)d).getBitmap();
-        }else{
-            // this was the way more people said to do it, just render the drawable to a canvas
-            // backed by your dest bitmap.  I assume if you're using a bitmapdrawable
-            // then this is slower than just pulling in the drawable backed bitmap
-            d.mutate();  // we change the setbounds() so lets not mess with the original
-            b = Bitmap.createBitmap( w, h, Config.ARGB_8888 );
-            Canvas c = new Canvas( b );
-            d.setBounds( 0, 0, w, h );
-            d.draw( c );
+        int width = d.getIntrinsicWidth();
+        int height = d.getIntrinsicHeight();
+
+        // catch colors/etc
+        if( width < 1 ) {
+            width = 1;
         }
-        
-        int width = b.getWidth();
-        int height = b.getHeight();
+
+        if( height < 1 ) {
+            height = 1;
+        }
 
         // if w/h is zero them it means to scale based on the non-zero one and
         // maintain aspect
         if( w == 0 ) {
-            w = (int)((float)h * width / height);
+            w = (int)( (float)h * width / height );
         }else if( h == 0 ) {
-            h = (int)((float)w * height / width);            
+            h = (int)( (float)w * height / width );
+        }
+
+        Bitmap b;
+        if( d instanceof BitmapDrawable ) {
+            // I found that the resources are already bitmapdrawables so we can
+            // do this,
+            // I assume it it's not created from a bitmap like it's a shape or
+            // something
+            // then this won't work?
+            b = ( (BitmapDrawable)d ).getBitmap();
+        }else {
+            // this was the way more people said to do it, just render the
+            // drawable to a canvas
+            // backed by your dest bitmap. I assume if you're using a
+            // bitmapdrawable
+            // then this is slower than just pulling in the drawable backed
+            // bitmap
+            d.mutate(); // we change the setbounds() so lets not mess with the
+            // original
+            b = Bitmap.createBitmap( width, height, Config.ARGB_8888 );
+            Canvas c = new Canvas( b );
+            d.setBounds( 0, 0, width, height );
+            d.draw( c );
         }
         
         float scaleWidth = ((float) w) / width;
