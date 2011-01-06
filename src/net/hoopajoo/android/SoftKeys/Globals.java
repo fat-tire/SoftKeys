@@ -173,7 +173,12 @@ public class Globals extends Application {
         Intent ni = new Intent( Intent.ACTION_MAIN );
         String launcher = settings.getString( longClick ? "launcher2" : "launcher" , null );
         if( launcher == null ) {
-            launcher = getDefaultLauncher();
+            if( longClick ) {
+                // default longpress home is softkeys
+                launcher = "net.hoopajoo.android.SoftKeys";
+            }else{
+                launcher = getDefaultLauncher();
+            }
         }
         ni.setPackage( launcher ); 
         ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
