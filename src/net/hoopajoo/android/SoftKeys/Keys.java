@@ -272,6 +272,9 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     Notification n = new Notification( b.mIconId, null, 0 );
                     Intent si = new Intent( b.mAction );
                     si.putExtra( "keyname", b.mExtraString );
+                    if( b.mAction == Intent.ACTION_MAIN ) {
+                        si.setPackage( getPackageName() );
+                    }
                     PendingIntent i = PendingIntent.getActivity( this, 0, si, 0 );
                     
                     // if we got a drawable but no view then set up our own remote view
