@@ -53,7 +53,7 @@ public class Globals extends Application {
             // set up env and run the context
             String wd = getFilesDir().getAbsolutePath();
             File jar = new File( wd + "/RemoteContext.jar" );
-            if( ! jar.exists() ) {
+            if( true ) {
                 AssetManager m = getResources().getAssets();
                 InputStream in = m.open( "input/RemoteContext.jar" );
                 FileOutputStream out = new FileOutputStream( jar );
@@ -78,7 +78,6 @@ public class Globals extends Application {
             }else{
                 mRootContext = new RootContext( "su", wd );
             }
-            
         }
 
         return( mRootContext );
@@ -142,12 +141,11 @@ public class Globals extends Application {
             // spawn our context
             system( "export CLASSPATH=" + workingDir + "/RemoteContext.jar" );
             system( "exec app_process " + workingDir + " net.hoopajoo.android.RemoteContext" );
-            runCommand( "" );
         }
         
         private void system( String cmd ) throws Exception {
             //Log.d( "SoftKeys.RootContext", "Running command: '" + cmd + "'" );
-            o.write(  (cmd + "\n" ).getBytes( "ASCII" ) );
+            o.write( (cmd + "\n" ).getBytes( "ASCII" ) );
         }
         
         // slightly renamed since we're not running system("cmd") anymore but
@@ -180,6 +178,14 @@ public class Globals extends Application {
         }
 
         android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        
+        // init the shell
+        try{
+            getRootContext();
+        }catch( Exception e ) {
+            Toast.makeText( this, "Failed to initialize root context", Toast.LENGTH_LONG );
+        }
+        
         restartService();
     }
     
@@ -241,5 +247,10 @@ public class Globals extends Application {
             defaultLauncher = "com.android.launcher";
         }
         return( defaultLauncher );
+    }
+    
+    public void quit() {
+        this.stopService( new Intent( this, SoftKeysService.class ) );
+        System.exit( 0 );
     }
 }

@@ -35,6 +35,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -53,6 +54,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SoftKeysService extends Service {
@@ -98,6 +100,15 @@ public class SoftKeysService extends Service {
                 return genericClick( v, true );
             }
         };
+        
+        /* TODO: fix this
+        OnTouchListener click = new OnTouchListener() {
+            @Override
+            public boolean onTouch( View view, MotionEvent me ) {
+                return genericClick( view, false, me );
+            }
+        };
+        */
         
         OnLongClickListener longpress_rotate = new OnLongClickListener() {
             @Override
@@ -288,10 +299,20 @@ public class SoftKeysService extends Service {
         ((LinearLayout)mView.findViewById( R.id.button_container )).removeView( container.findViewById( R.id.settings ) ); // no settings in service
         
         // arrange buttons
-        Keys.applyButtons( settings, mView, c, lc, touch, true );
+        Keys.applyButtons( settings, mView, c, lc, null, true );
         mView.setOnTouchListener( touch );
         mView.setOnLongClickListener( longpress_rotate );
-        mView.findViewById(  R.id.exit ).setOnLongClickListener( longpress_rotate );
+        
+        // only drag by the exit button now
+        mView.findViewById( R.id.exit ).setOnTouchListener( touch );
+        mView.findViewById( R.id.exit ).setOnLongClickListener( longpress_rotate );
+
+        /* For when long click motionevent is fixed
+        // home button uses old generic click
+        mView.findViewById( R.id.home ).setOnTouchListener( null );
+        mView.findViewById( R.id.home ).setOnClickListener( c );
+        mView.findViewById( R.id.home ).setOnLongClickListener( lc );
+        */
         
         applyTransparency( mView, settings.getInt( "service_transparency", 0 ) );
         
@@ -361,7 +382,7 @@ public class SoftKeysService extends Service {
                 } ) {
             View v = mExtraView.findViewById( id );
             v.setOnClickListener( c );
-            v.setOnTouchListener( touch );
+            //v.setOnTouchListener( click );
             
             String name = null;
             switch( id ) {
@@ -396,19 +417,18 @@ public class SoftKeysService extends Service {
                     Generator.scaledIconSize( this, 0, buttonMult ) );
             }
             
-            // if it's one of the custom buttons add the custom updater
+            // long press on more/less to configure customs
             switch( id ) {
-                case R.id.extra_custom1:
-                case R.id.extra_custom2:
-                case R.id.extra_custom3:
-                case R.id.extra_custom4:
-                case R.id.extra_custom5:
-                case R.id.extra_custom6:
+                case R.id.extra_more:
+                case R.id.extra_less:
+                    //v.setOnTouchListener( null );
+                    //v.setOnClickListener( c );
                     v.setOnLongClickListener( configButtons );
                     break;
             }
         }
         mNumRows = settings.getInt( "service_extra_num_custom", 0 );
+        mExtraEnabled = settings.getBoolean( "service_extra_enabled", false );
         updateExtraRows();
         
         // update the button configs, they are simply mapped by id in to a hashmap
@@ -502,7 +522,19 @@ public class SoftKeysService extends Service {
         wm.updateViewLayout( mExtraView, params );
     }
     
-    private boolean genericClick( View v, boolean longClick) {
+    private boolean genericClick( View v, boolean longClick ) {
+        return genericClick( v, longClick, null );
+    }
+    
+    // note: from testing keyup/keydown don't work the way I expect, we need
+    // to also insert keyrepeat, so long-press volume, etc doesn't work the
+    // way you'd think.  We should fix that someday, but for now you can just
+    // mash the key a bunch of times
+    private boolean genericClick( View v, boolean longClick, MotionEvent me ) {
+        if( me != null ) {
+            Toast.makeText( this, "Warning: MotionEvent is broken", Toast.LENGTH_LONG );
+        }
+        
         // send an intent to the main window
         int keyid = 0;
         Globals app = (Globals)getApplication();
@@ -599,7 +631,23 @@ public class SoftKeysService extends Service {
                     // error from the sendkeys
                 }
             }else{
-                app.sendKeys( new int[] { keyid } );
+                if( me != null ) {
+                    // do down/up
+                    if( me.getAction() == KeyEvent.ACTION_DOWN ) {
+                        app.sendKeyDown( keyid );
+                    }else if( me.getAction() == KeyEvent.ACTION_UP ) {
+                        app.sendKeyUp( keyid );
+                    }
+                }else{
+                    app.sendKeys( new int[] { keyid } );
+                }
+            }
+        }
+
+        if( me != null ) {
+            // hide always false unless keyup
+            if( me.getAction() != KeyEvent.ACTION_UP ) {
+                hide = false;
             }
         }
         
@@ -672,11 +720,9 @@ public class SoftKeysService extends Service {
         }
         
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-        
         SharedPreferences.Editor e = settings.edit();
         e.putInt( "service_extra_num_custom", mNumRows );
         e.commit();
-
     }
     
     private void savePosition() {
@@ -694,6 +740,8 @@ public class SoftKeysService extends Service {
         l = (WindowManager.LayoutParams)mExtraView.getLayoutParams();
         e.putInt( "service_extra_last_x_" + mOrientation, l.x );
         e.putInt( "service_extra_last_y_" + mOrientation, l.y );
+        
+        e.putBoolean( "service_extra_enabled", mExtraEnabled );
         
         e.commit();
     }

@@ -399,8 +399,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                 return true;
                 
             case R.id.menu_quit:
-                ((Globals)getApplication()).stopService( new Intent( this, SoftKeysService.class ) );
-                this.finish();
+                ((Globals)getApplication()).quit();
                 return true;
                 
             default:
