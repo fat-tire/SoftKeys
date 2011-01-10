@@ -104,6 +104,32 @@ public class Globals extends Application {
         return 0;
     }
     
+    public int sendKeyDown( int keyid ) {
+        try {
+            Globals.RootContext cmd = getRootContext();
+            cmd.runCommand( "keycodedown " + keyid );
+        }catch( Exception e ) {
+            Log.e( LOG, "Error: " + e.getMessage() );
+            Toast.makeText( this, "Unable to execute as root", Toast.LENGTH_LONG ).show();
+            return 1;
+        }
+        
+        return 0;
+    }
+    
+    public int sendKeyUp( int keyid ) {
+        try {
+            Globals.RootContext cmd = getRootContext();
+            cmd.runCommand( "keycodeup " + keyid );
+        }catch( Exception e ) {
+            Log.e( LOG, "Error: " + e.getMessage() );
+            Toast.makeText( this, "Unable to execute as root", Toast.LENGTH_LONG ).show();
+            return 1;
+        }
+        
+        return 0;
+    }
+    
     public class RootContext {
         Process p;
         OutputStream o;
@@ -116,6 +142,7 @@ public class Globals extends Application {
             // spawn our context
             system( "export CLASSPATH=" + workingDir + "/RemoteContext.jar" );
             system( "exec app_process " + workingDir + " net.hoopajoo.android.RemoteContext" );
+            runCommand( "" );
         }
         
         private void system( String cmd ) throws Exception {
