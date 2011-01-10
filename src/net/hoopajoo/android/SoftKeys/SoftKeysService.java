@@ -556,7 +556,11 @@ public class SoftKeysService extends Service {
                 break;
                 
             case R.id.search:
-                keyid = K.KEYID_SEARCH;
+                if( longClick ) {
+                    app.doLongSearchAction();
+                }else{
+                    keyid = K.KEYID_SEARCH;
+                }
                 break;
                 
             case R.id.exit:

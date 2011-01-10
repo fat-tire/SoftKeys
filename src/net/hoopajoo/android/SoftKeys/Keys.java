@@ -515,7 +515,12 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                 break;
                 
             case R.id.search:
-                keyids.add( K.KEYID_SEARCH );
+                if( longClick ) {
+                    ((Globals)getApplication()).doLongSearchAction();
+                    return true;
+                }else{
+                    keyids.add( K.KEYID_SEARCH );
+                }
                 break;
             
             case R.id.exit:

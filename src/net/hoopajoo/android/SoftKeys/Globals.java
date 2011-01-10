@@ -225,6 +225,12 @@ public class Globals extends Application {
         startActivity( ni );
     }
     
+    public void doLongSearchAction() {
+        Intent ni = new Intent( Intent.ACTION_SEARCH_LONG_PRESS );
+        ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity( ni );
+    }
+    
     private String getDefaultLauncher() {
         // Set default launcher to the first launcher we find so we don't freak out if it's not
         // set and there is no com.android.launcher
