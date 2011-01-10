@@ -89,12 +89,6 @@
 	</LinearLayout>
 
 	<!--  these are user-customizable buttons -->
-	<LinearLayout
-		android:id="@+id/extra_row1"
-		android:gravity="center"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
 		<Button
 			android:id="@+id/extra_custom1"
 			android:layout_width="fill_parent"
@@ -107,14 +101,6 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:text="custom"/>
-	</LinearLayout>
-	
-	<LinearLayout
-		android:id="@+id/extra_row2"
-		android:gravity="center"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
 		<Button
 			android:id="@+id/extra_custom3"
 			android:layout_width="fill_parent"
@@ -127,14 +113,6 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:text="custom"/>
-	</LinearLayout>
-			
-	<LinearLayout
-		android:id="@+id/extra_row3"
-		android:gravity="center"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
 		<Button
 			android:id="@+id/extra_custom5"
 			android:layout_width="fill_parent"
@@ -147,5 +125,4 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:text="custom"/>
-	</LinearLayout>
 </LinearLayout>

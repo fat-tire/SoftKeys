@@ -25,66 +25,43 @@
 		android:layout_height="wrap_content"
 		>
 
-	<LinearLayout
-		android:id="@+id/extra_row1"
-		android:gravity="center"
+	<Spinner
+		android:id="@+id/extra_custom1"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<Spinner
-			android:id="@+id/extra_custom1"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="custom"/>
-		<Spinner
-			android:id="@+id/extra_custom2"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="custom"/>
-	</LinearLayout>
-	
-	<LinearLayout
-		android:id="@+id/extra_row2"
-		android:gravity="center"
+		android:layout_weight="1"
+		android:text="custom"/>
+	<Spinner
+		android:id="@+id/extra_custom2"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<Spinner
-			android:id="@+id/extra_custom3"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="custom"/>
-		<Spinner
-			android:id="@+id/extra_custom4"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="custom"/>
-	</LinearLayout>
-			
-	<LinearLayout
-		android:id="@+id/extra_row3"
-		android:gravity="center"
+		android:layout_weight="1"
+		android:text="custom"/>	
+	<Spinner
+		android:id="@+id/extra_custom3"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<Spinner
-			android:id="@+id/extra_custom5"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="custom"/>
-		<Spinner
-			android:id="@+id/extra_custom6"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="custom6"/>
-	</LinearLayout>
-	
+		android:layout_weight="1"
+		android:text="custom"/>
+	<Spinner
+		android:id="@+id/extra_custom4"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="custom"/>
+	<Spinner
+		android:id="@+id/extra_custom5"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="custom"/>
+	<Spinner
+		android:id="@+id/extra_custom6"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="custom6"/>
+
 	<LinearLayout
 		android:id="@+id/extra_row_modify"
 		android:gravity="center"
