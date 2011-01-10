@@ -75,10 +75,7 @@ public class ConfigureExtra extends Activity implements OnClickListener {
             i++;
             String pref_name = "service_extra_custom" + i + "_keyid";
             int keycode = settings.getInt( pref_name, 0 );
-            String keyname = K.keyIdToName( keycode );
-            if( keyname == null ) {
-                keyname = "NONE";
-            }
+
             Spinner s = (Spinner)findViewById( id );
             s.setAdapter( adapter );
             
@@ -122,7 +119,7 @@ public class ConfigureExtra extends Activity implements OnClickListener {
         public int mId;
         
         CustomKey( int id, String name ) {
-            mName = name;
+            mName = prettyPrint( name );
             mId = id;
         }
         
@@ -130,4 +127,28 @@ public class ConfigureExtra extends Activity implements OnClickListener {
             return mName;
         }
     }
+    
+    public static String prettyPrint( String n ) {
+        // replace _ with space, initcap
+        String s = n.replace( "_", " " );
+
+        boolean bound = true;
+        StringBuilder r = new StringBuilder();
+        for( int i = 0; i < s.length(); i++ ) {
+            if( bound ) {
+                // cap
+                r.append( Character.toUpperCase( s.charAt( i ) ) );
+                bound = false;
+            }else{
+                r.append( Character.toLowerCase( s.charAt( i ) ) );
+            }
+
+            // check for boundry
+            if( Character.isSpace( s.charAt( i ) ) ) {
+                bound = true;
+            }
+        }
+
+        return r.toString();
+    }    
 }

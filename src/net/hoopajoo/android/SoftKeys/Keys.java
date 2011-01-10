@@ -398,6 +398,11 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                 generic_click( R.id.settings, false );
                 return true;
                 
+            case R.id.menu_quit:
+                ((Globals)getApplication()).stopService( new Intent( this, SoftKeysService.class ) );
+                this.finish();
+                return true;
+                
             default:
                 return super.onOptionsItemSelected( item );
         }
@@ -540,8 +545,8 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             // if we sent back, and didn't backout (so it was from main ui) and they
             // want to return, run am to get us back
             if( id == R.id.back && backout && return_after_back ) {
-                Globals.CommandShell cmd = ((Globals)getApplication()).getCommandShell();
-                cmd.system( "am start -a android.intent.action.MAIN -n net.hoopajoo.android.SoftKeys/.Keys" );
+                Globals.RootContext cmd = ((Globals)getApplication()).getRootContext();
+                cmd.runCommand( "system am start -a android.intent.action.MAIN -n net.hoopajoo.android.SoftKeys/.Keys" );
             }
         }catch( Exception e ) {
             // we don't really care if this fails, they should have gotten a shell

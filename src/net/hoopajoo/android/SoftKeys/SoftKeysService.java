@@ -66,9 +66,8 @@ public class SoftKeysService extends Service {
     private View mDraggingViewObj;
     private int mDraggingOrigX, mDraggingOrigY;
     private int mDraggingViewX, mDraggingViewY;
-    private boolean mPendingDragEvent;
     private boolean mDidDrag;
-    private boolean mExtraEnabled = true;
+    private boolean mExtraEnabled = false;
     private int mNumDrags;
     private OrientationEventListener mOrientationListener;
     private Runnable mUpdateDrag;
@@ -244,8 +243,6 @@ public class SoftKeysService extends Service {
                 
                 WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
                 wm.updateViewLayout( root, l );
-                
-                mPendingDragEvent = false;
             }
         };
         
@@ -325,6 +322,15 @@ public class SoftKeysService extends Service {
             }
         } );
 
+        b.setOnLongClickListener( new OnLongClickListener() {
+            @Override
+            public boolean onLongClick( View v ) {
+                mExtraEnabled = ! mExtraEnabled;
+                matchExtraView();
+                return true;
+            }
+        } );
+        
         // extra view (dpad, customizable buttons)
         mExtraView = l.inflate( R.layout.service_extra, null );
         Generator.applyContainerExtras( mExtraView, "service_extra",
@@ -419,6 +425,8 @@ public class SoftKeysService extends Service {
             if( keycode > 0 ) {
                 if( keyname == null ) {
                     keyname = "NONE";
+                }else{
+                    keyname = ConfigureExtra.prettyPrint( keyname );
                 }
             }else{
                 if( keycode == 0 ) {
