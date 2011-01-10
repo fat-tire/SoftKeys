@@ -262,14 +262,6 @@ public class SoftKeysService extends Service {
         
         // The main buttons
         mView = l.inflate( R.layout.service, null );
-
-        mOrientationListener = new OrientationEventListener( this, SensorManager.SENSOR_DELAY_NORMAL ) {
-            @Override 
-            public void onOrientationChanged( int orientation ) {
-                initOrientation();
-            }
-        };
-        mOrientationListener.enable();
         
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
 
@@ -471,6 +463,14 @@ public class SoftKeysService extends Service {
         wm.addView( mBumpView, makeOverlayParams() );
         wm.addView( mView, makeOverlayParams() );
         wm.addView( mExtraView, makeOverlayParams() );
+        
+        mOrientationListener = new OrientationEventListener( this, SensorManager.SENSOR_DELAY_NORMAL ) {
+            @Override 
+            public void onOrientationChanged( int orientation ) {
+                initOrientation();
+            }
+        };
+        mOrientationListener.enable();
         
         initOrientation();
     }
