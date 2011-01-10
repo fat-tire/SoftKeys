@@ -20,6 +20,7 @@ package net.hoopajoo.android.SoftKeys;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,13 +31,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.AssetManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
 public class Globals extends Application {
-    private CommandShell cmd = null;
+    private RootContext mRootContext = null;
     private String android_id = null;
     private String LOG = "SoftKeys.Global";
     
@@ -45,8 +47,25 @@ public class Globals extends Application {
     public boolean didInitNotifications = false;
     public boolean firstRun = true;
     
-    public CommandShell getCommandShell() throws Exception {
-        if( cmd == null ) {
+    // interface to root context class
+    public RootContext getRootContext() throws Exception {
+        if( mRootContext == null ) {
+            // set up env and run the context
+            String wd = getFilesDir().getAbsolutePath();
+            File jar = new File( wd + "/RemoteContext.jar" );
+            if( ! jar.exists() ) {
+                AssetManager m = getResources().getAssets();
+                InputStream in = m.open( "input/RemoteContext.jar" );
+                FileOutputStream out = new FileOutputStream( jar );
+                int read;
+                byte[] b = new byte[ 4 * 1024 ];
+                while( ( read = in.read( b ) ) != -1 ) {
+                    out.write( b, 0, read );
+                }
+                out.close();                
+                in.close();
+            }
+
             if( android_id == null ) {
                 // to run in the emulator
                 // adb shell
@@ -55,49 +74,27 @@ public class Globals extends Application {
                 // # chmod 6755 /data/tmp/su
                 // # mount -oremount,suid /dev/block/mtdblock1 /data
                 Log.d( LOG, "Detected emulator" );
-                cmd = new CommandShell( "/data/tmp/su" );
+                mRootContext = new RootContext( "/data/tmp/su", wd );
             }else{
-                cmd = new CommandShell( "su" );
+                mRootContext = new RootContext( "su", wd );
             }
+            
         }
 
-        return( cmd );
+        return( mRootContext );
     }
-
+    
     // this is a string of keydown/keyup events by key id
     public int sendKeys( List<Integer> a ) {
         return sendKeys( listToInt( a ) );
     }
     
-    // TODO: replace this with monkey script, then we can do longpresses
     public int sendKeys( int[] keyids ) {
         try {
-            Globals.CommandShell cmd = getCommandShell();
-            
-            // run our key script
-            String wd = getFilesDir().getAbsolutePath();
-
-            // check if we have a dev script
-            File script = new File( wd + "/pushkey.dev" );
-            
-            // check if we have a test script
-            if( script.exists() ) {
-                Log.d( LOG, "Using dev key script" );
-            }else{
-                // write out our default script
-                script = new File( wd + "/pushkey" );
-                FileOutputStream out = new FileOutputStream( script );
-                out.write( "for f in $* ; do input keyevent $f ; done\n".getBytes( "ASCII" ) );
-                out.close();
+            Globals.RootContext cmd = getRootContext();
+            for( int id : keyids ) {
+                cmd.runCommand( "keycode " + id );
             }
-            
-            // source the file since datadata might be noexec
-            StringBuilder keyid = new StringBuilder();
-            for( int i = 0; i < keyids.length; i++ ) {
-                keyid.append( " " );
-                keyid.append( keyids[ i ] );
-            }
-            cmd.system( "sh " + script.getAbsolutePath() + " " + keyid );            
         }catch( Exception e ) {
             Log.e( LOG, "Error: " + e.getMessage() );
             Toast.makeText( this, "Unable to execute as root", Toast.LENGTH_LONG ).show();
@@ -107,23 +104,33 @@ public class Globals extends Application {
         return 0;
     }
     
-    public class CommandShell {
+    public class RootContext {
         Process p;
         OutputStream o;
         
-        CommandShell( String shell ) throws Exception {
-            Log.d( "SoftKeys.cmdshell", "Starting shell: '" + shell + "'" );
+        RootContext( String shell, String workingDir ) throws Exception {
+            //Log.d( "SoftKeys.RootContext", "Starting shell: '" + shell + "'" );
             p = Runtime.getRuntime().exec( shell );
             o = p.getOutputStream();
+            
+            // spawn our context
+            system( "export CLASSPATH=" + workingDir + "/RemoteContext.jar" );
+            system( "exec app_process " + workingDir + " net.hoopajoo.android.RemoteContext" );
         }
         
-        public void system( String cmd ) throws Exception {
-            Log.d( "SoftKeys.cmdshell", "Running command: '" + cmd + "'" );
+        private void system( String cmd ) throws Exception {
+            //Log.d( "SoftKeys.RootContext", "Running command: '" + cmd + "'" );
             o.write(  (cmd + "\n" ).getBytes( "ASCII" ) );
         }
         
+        // slightly renamed since we're not running system("cmd") anymore but
+        // RootContext commands
+        public void runCommand( String cmd ) throws Exception {
+            system( cmd );
+        }
+        
         public void close() throws Exception {
-            Log.d( "SoftKeys.cmdshell", "Destroying shell" );
+            //Log.d( "SoftKeys.RootContext", "Destroying shell" );
             o.flush();
             o.close();
             p.destroy();
@@ -133,7 +140,7 @@ public class Globals extends Application {
     @Override
     public void onCreate() {
         // warn if we don't notice some binaries we need
-        for( String name : new String[] { "/system/bin/su", "/system/bin/input" } ) {
+        for( String name : new String[] { "/system/bin/su" } ) {
             File check = new File( name );
             try {
                 if( ! check.exists() ) {
