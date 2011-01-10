@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Copyright (c) 2010 Steve Slaven
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/main_view"
+		android:orientation="vertical"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		>
+
+	<LinearLayout
+		android:id="@+id/extra_row1"
+		android:gravity="center"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<Spinner
+			android:id="@+id/extra_custom1"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="custom"/>
+		<Spinner
+			android:id="@+id/extra_custom2"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="custom"/>
+	</LinearLayout>
+	
+	<LinearLayout
+		android:id="@+id/extra_row2"
+		android:gravity="center"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<Spinner
+			android:id="@+id/extra_custom3"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="custom"/>
+		<Spinner
+			android:id="@+id/extra_custom4"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="custom"/>
+	</LinearLayout>
+			
+	<LinearLayout
+		android:id="@+id/extra_row3"
+		android:gravity="center"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<Spinner
+			android:id="@+id/extra_custom5"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="custom"/>
+		<Spinner
+			android:id="@+id/extra_custom6"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="custom6"/>
+	</LinearLayout>
+	
+	<LinearLayout
+		android:id="@+id/extra_row_modify"
+		android:gravity="center"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		
+		<Button
+			android:id="@+id/extra_modify_cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Cancel"/>
+			
+		<Button
+			android:id="@+id/extra_modify_save"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Save"/>
+	</LinearLayout>
+	
+</LinearLayout>
