@@ -46,6 +46,14 @@
 			        android:defaultValue="0"
 			        android:max="100"
 			        />
+			        
+			    <com.hlidskialf.android.preference.SeekBarPreference 
+			    	android:key="service_extra_transparency"
+			        android:title="@string/pref_service_extra_transparency_title"
+			        android:summary="@string/pref_service_extra_transparency_summary"
+			        android:defaultValue="0"
+			        android:max="100"
+			        />			        
 
 			    <com.hlidskialf.android.preference.SeekBarPreference 
 			    	android:key="service_popper_transparency"

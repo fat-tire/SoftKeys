@@ -18,6 +18,8 @@
     <string name="pref_service_size_summary">Size of Service Popup Buttons</string>
     <string name="pref_service_transparency_title">Button Bar Transparency</string>
     <string name="pref_service_transparency_summary">Set Transparency of Service Popup</string>
+    <string name="pref_service_extra_transparency_title">D-Pad/Custom Transparency</string>
+    <string name="pref_service_extra_transparency_summary">Set Transparency of D-Pad/Custom Keys Popup</string>
     <string name="pref_service_popper_transparency_title">Popper Transparency</string>
     <string name="pref_service_popper_transparency_summary">Set Transparency of Button That Triggers Service Popup</string>
     <string name="pref_service_close_after_title">Auto Hide</string>
