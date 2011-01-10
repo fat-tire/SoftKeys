@@ -41,20 +41,30 @@ public class Generator {
         return( (int) resources.getDimension( android.R.dimen.app_icon_size ) );
     }
 
-    public static View createButtonContainer( Context c, int iconSize, float iconScale, String prefix, ViewGroup root ) {
-        return createButtonContainer( c, iconSize, iconScale, prefix, root, null );
-    }
-    
-    // this assembles a generic button_container that can be inserted into whatever layout
-    public static View createButtonContainer( Context c, int iconSize, float iconScale, String prefix, ViewGroup root, int[] buttons ) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( c );
-        Theme theme = new Theme( c, settings.getString( "theme", null ) );
+    public static int scaledIconSize( Context c, int iconSize, float iconScale ) {
         if( iconSize == 0 ) {
             // default icon size
             iconSize = defaultIconSize( c );
         }
         
         iconSize = (int)(iconSize * iconScale);
+        return( iconSize );
+    }
+    
+    public static Theme currentTheme( Context c ) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( c );
+        Theme theme = new Theme( c, settings.getString( "theme", null ) );
+        return( theme );
+    }
+    
+    public static View createButtonContainer( Context c, int iconSize, float iconScale, String prefix, ViewGroup root ) {
+        return createButtonContainer( c, iconSize, iconScale, prefix, root, null );
+    }
+    
+    // this assembles a generic button_container that can be inserted into whatever layout
+    public static View createButtonContainer( Context c, int iconSize, float iconScale, String prefix, ViewGroup root, int[] buttons ) {
+        Theme theme = currentTheme( c );
+        iconSize = scaledIconSize( c, iconSize, iconScale );
         
         // we start with some kind of viewgroup (linearlayout,etc)
         ViewGroup orig_container = (ViewGroup)theme.inflateLayout( c,
@@ -84,24 +94,7 @@ public class Generator {
         }
 
         container.setId( R.id.button_container );
-        Drawable d = theme.getDrawable( 
-                new String[] { prefix + "_button_container_background", 
-                        "button_container_background" }
-            );
-        
-        if( d != null ) {
-            // resize?
-            if( theme.getBoolean( new String[] { prefix + "_resize_background", "resize_background" } ) ) {
-                d = resizeImage( d, 0, iconSize );
-            }
-            
-            applyTiling( d, theme.getString( new String[] {
-                    prefix + "_tile_background", 
-                    "tile_background" 
-                } ) );
-
-            container.setBackgroundDrawable( d );
-        }
+        applyContainerExtras( container, prefix, theme, iconSize );
         
         // now we add the buttons
         if( buttons == null ) {
@@ -165,43 +158,9 @@ public class Generator {
             }
             
             b.setId( i );
-            
-            // Add our images at the size we want
-            d = b.getDrawable(); 
-            
-            if( d == null ) {
-                d = theme.getDrawable( 
-                    new String[] { prefix + "_button_" + name, 
-                            prefix + "_button", "button_" + name, "button" }
-                );
-            }
-            b.setImageDrawable( resizeImage( d, iconSize, iconSize ) );
-            
-            // add bg if not set and one is specified in the theme
-            d = theme.getDrawable( 
-                    new String[] { prefix + "_button_background_" + name, 
-                            prefix + "_button_background", "button_background_" + name,
-                            "button_background" }
-                );
-            
-            if( d != null ) {
-                if( theme.getBoolean( new String[] { 
-                        prefix + "_resize_button_background_" + name, 
-                        prefix + "_resize_button_background", 
-                        "resize_button_background_" + name,
-                        "resize_button_background" } ) ) {
-                    d = resizeImage( d, 0, iconSize );
-                }
 
-                applyTiling( d, theme.getString( new String[] {
-                    prefix + "_tile_button_background_" + name, 
-                    prefix + "_tile_button_background", 
-                    "tile_button_background_" + name,
-                    "tile_button_background" 
-                } ) );
-
-                b.setBackgroundDrawable( d );
-            }
+            applyButtonExtras( b, prefix, name, theme, iconSize );
+            
             
             container.addView( orig_b );
         }
@@ -311,6 +270,67 @@ public class Generator {
             }
             
             bm.setTileModeXY( tms[ 0 ], tms[ 1 ] );
+        }
+    }
+    
+    public static void applyContainerExtras( View container, String prefix, Theme theme, int iconSize ) {
+        Drawable d = theme.getDrawable( 
+                new String[] { prefix + "_button_container_background", 
+                        "button_container_background" }
+            );
+        
+        if( d != null ) {
+            // resize?
+            if( theme.getBoolean( new String[] { prefix + "_resize_background", "resize_background" } ) ) {
+                d = resizeImage( d, 0, iconSize );
+            }
+            
+            applyTiling( d, theme.getString( new String[] {
+                    prefix + "_tile_background", 
+                    "tile_background" 
+                } ) );
+
+            container.setBackgroundDrawable( d );
+        }
+    }
+    
+    public static void applyButtonExtras( ImageButton b, String prefix, String name,
+                Theme theme, int iconSize ) {
+        // Add our images at the size we want
+        Drawable d = b.getDrawable(); 
+        
+        if( d == null ) {
+            d = theme.getDrawable( 
+                new String[] { prefix + "_button_" + name, 
+                        prefix + "_button", "button_" + name, "button" }
+            );
+        }
+        b.setImageDrawable( resizeImage( d, iconSize, iconSize ) );
+        
+        // add bg if not set and one is specified in the theme
+        d = theme.getDrawable( 
+                new String[] { prefix + "_button_background_" + name, 
+                        prefix + "_button_background", "button_background_" + name,
+                        "button_background" }
+            );
+        
+        if( d != null ) {
+            if( theme.getBoolean( new String[] { 
+                    prefix + "_resize_button_background_" + name, 
+                    prefix + "_resize_button_background", 
+                    "resize_button_background_" + name,
+                    "resize_button_background" } ) ) {
+                d = resizeImage( d, 0, iconSize );
+            }
+
+            applyTiling( d, theme.getString( new String[] {
+                prefix + "_tile_button_background_" + name, 
+                prefix + "_tile_button_background", 
+                "tile_button_background_" + name,
+                "tile_button_background" 
+            } ) );
+
+            b.setBackgroundDrawable( d );
         }
     }
 }
