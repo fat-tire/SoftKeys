@@ -18,12 +18,19 @@
 */
 package net.hoopajoo.android.SoftKeys;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
@@ -40,12 +47,18 @@ import android.view.View.OnTouchListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LayoutAnimationController;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SoftKeysService extends Service {
     private InputSmoother mInputSmoother;
     private View mView;
+    private View mExtraView;
     private View mBumpView;
     private boolean auto_hide;
     private boolean auto_hide_after_back;
@@ -55,14 +68,19 @@ public class SoftKeysService extends Service {
     private int mDraggingViewX, mDraggingViewY;
     private boolean mPendingDragEvent;
     private boolean mDidDrag;
+    private boolean mExtraEnabled = true;
     private int mNumDrags;
-    private OrientationEventListener mOrientation;
+    private OrientationEventListener mOrientationListener;
     private Runnable mUpdateDrag;
+    
+    private int mNumRows = 0;
+    private Map<Integer,Integer> mCustomKeys = new HashMap<Integer,Integer>();
     
     private final int mOffScreenMax = 20;
     
     private int mScreenWidth;
     private int mScreenHeight;
+    private String mOrientation;
     
     @Override
     public void onCreate() {
@@ -233,15 +251,17 @@ public class SoftKeysService extends Service {
         
         // get our root (don't go through theme handler, this comes from the main app always)
         LayoutInflater l = LayoutInflater.from( this );
+        
+        // The main buttons
         mView = l.inflate( R.layout.service, null );
 
-        mOrientation = new OrientationEventListener( this, SensorManager.SENSOR_DELAY_NORMAL ) {
+        mOrientationListener = new OrientationEventListener( this, SensorManager.SENSOR_DELAY_NORMAL ) {
             @Override 
             public void onOrientationChanged( int orientation ) {
                 initOrientation();
             }
         };
-        mOrientation.enable();
+        mOrientationListener.enable();
         
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
 
@@ -272,7 +292,6 @@ public class SoftKeysService extends Service {
         
         // arrange buttons
         Keys.applyButtons( settings, mView, c, lc, touch, true );
-        mView.setVisibility( View.INVISIBLE );
         mView.setOnTouchListener( touch );
         mView.setOnLongClickListener( longpress_rotate );
         mView.findViewById(  R.id.exit ).setOnLongClickListener( longpress_rotate );
@@ -302,13 +321,126 @@ public class SoftKeysService extends Service {
         b.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View v ) {
-                toggle_bar();
+                toggleBar();
             }
         } );
+
+        // extra view (dpad, customizable buttons)
+        mExtraView = l.inflate( R.layout.service_extra, null );
+        Generator.applyContainerExtras( mExtraView, "service_extra",
+            Generator.currentTheme( this ),
+            Generator.scaledIconSize( this, 0, buttonMult ) );
+        
+        mExtraView.setOnTouchListener( touch );
+        
+        OnLongClickListener configButtons = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick( View v ) {
+                // run the button configure dialog, since we are a service and not an
+                // application window context, we can not use alert dialogs or
+                // spinners or anything like that which is kind of annoying
+                toggleBar();
+                Intent i = new Intent( v.getContext(), ConfigureExtra.class );
+                i.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+                v.getContext().startActivity( i );
+                return (true );
+            }
+        };
+
+        for( int id : new int[] { R.id.extra_center, R.id.extra_up,R.id.extra_down,
+                    R.id.extra_left, R.id.extra_right, R.id.extra_more, R.id.extra_less,
+                    R.id.extra_custom1, R.id.extra_custom2,
+                    R.id.extra_custom3, R.id.extra_custom4,
+                    R.id.extra_custom5, R.id.extra_custom6                    
+                } ) {
+            View v = mExtraView.findViewById( id );
+            v.setOnClickListener( c );
+            v.setOnTouchListener( touch );
+            
+            String name = null;
+            switch( id ) {
+                case R.id.extra_center:
+                    name = "dpad_center";
+                    break;
+                case R.id.extra_up:
+                    name = "dpad_up";
+                    break;
+                case R.id.extra_down:
+                    name = "dpad_down";
+                    break;
+                case R.id.extra_left:
+                    name = "dpad_left";
+                    break;
+                case R.id.extra_right:
+                    name = "dpad_right";
+                    break;
+                    
+                case R.id.extra_more:
+                    name = "extra_more";
+                    break;
+                    
+                case R.id.extra_less:
+                    name = "extra_less";
+                    break;
+            }
+            
+            if( name != null ) {
+                Generator.applyButtonExtras( (ImageButton)v, "service_extra", name,
+                    Generator.currentTheme( this ),
+                    Generator.scaledIconSize( this, 0, buttonMult ) );
+            }
+            
+            // if it's one of the custom buttons add the custom updater
+            switch( id ) {
+                case R.id.extra_custom1:
+                case R.id.extra_custom2:
+                case R.id.extra_custom3:
+                case R.id.extra_custom4:
+                case R.id.extra_custom5:
+                case R.id.extra_custom6:
+                    v.setOnLongClickListener( configButtons );
+                    break;
+            }
+        }
+        mNumRows = 0;
+        updateExtraRows();
+        
+        // update the button configs, they are simply mapped by id in to a hashmap
+        int i = 0;
+        for( int id : new int[] { 
+                    R.id.extra_custom1, R.id.extra_custom2,
+                    R.id.extra_custom3, R.id.extra_custom4,
+                    R.id.extra_custom5, R.id.extra_custom6                    
+                } )  {
+            i++;
+            String pref_name = "service_extra_custom" + i + "_keyid";
+            int keycode = settings.getInt( pref_name, 0 );
+            String keyname = K.keyIdToName( keycode );
+            if( keycode > 0 ) {
+                if( keyname == null ) {
+                    keyname = "NONE";
+                }
+            }else{
+                if( keycode == 0 ) {
+                    keyname = "NONE";
+                }
+                if( keycode == -1 ) {
+                    keyname = "SLEEP";
+                }
+            }
+            
+            ((Button)mExtraView.findViewById( id )).setText( keyname );
+            mCustomKeys.put( id, keycode );
+        }
+        applyTransparency( mExtraView, settings.getInt( "service_extra_transparency", 0 ) );
+        
+        // hide stuff
+        toggleBar();
         
         WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
         wm.addView( mBumpView, makeOverlayParams() );
         wm.addView( mView, makeOverlayParams() );
+        wm.addView( mExtraView, makeOverlayParams() );
         
         initOrientation();
     }
@@ -335,56 +467,31 @@ public class SoftKeysService extends Service {
         mScreenWidth = display.getWidth();
         mScreenHeight = display.getHeight();
 
-        /*
-        // popup button
-        //params.gravity = Gravity.RIGHT;
-        WindowManager.LayoutParams params = (WindowManager.LayoutParams)mBumpView.getLayoutParams();
-        params.x = settings.getInt( "service_bump_last_x", 0 );
-        params.y = settings.getInt( "service_bump_last_y", 0 );
-        if( params.x == 0 && params.y == 0 ) {
-            params.gravity = Gravity.RIGHT;
-        }else{
-            params.gravity = Gravity.TOP | Gravity.LEFT;
+        mOrientation = "portrait";
+        if( mScreenWidth > mScreenHeight ) {
+            mOrientation = "landscape";
         }
+        
+        // popup button
+        WindowManager.LayoutParams params = (WindowManager.LayoutParams)mBumpView.getLayoutParams();
+        // float right by default
+        params.x = settings.getInt( "service_bump_last_x_" + mOrientation, mScreenWidth - mBumpView.getWidth() );
+        params.y = settings.getInt( "service_bump_last_y_" + mOrientation, ( mScreenHeight / 2 ) - mBumpView.getHeight() );
+        params.gravity = Gravity.TOP | Gravity.LEFT;
         wm.updateViewLayout(mBumpView, params);
 
         params = (WindowManager.LayoutParams)mView.getLayoutParams();
-        params.x = settings.getInt( "service_last_x", 0 );
-        params.y = settings.getInt( "service_last_y", 0 );
-        if( params.x == 0 && params.y == 0 ) {
-            params.gravity = Gravity.CENTER | Gravity.BOTTOM;
-        }else{
-            params.gravity = Gravity.TOP | Gravity.LEFT;
-        }
-        
-        wm.updateViewLayout(mView, params);
-        */
-
-        // popup button
-        //params.gravity = Gravity.RIGHT;
-        WindowManager.LayoutParams params = (WindowManager.LayoutParams)mBumpView.getLayoutParams();
-        params.x = settings.getInt( "service_bump_last_x", 0 );
-        params.y = settings.getInt( "service_bump_last_y", 0 );
+        // bottom center default
+        params.x = settings.getInt( "service_last_x_" + mOrientation, ( mScreenWidth - mView.getWidth() ) / 2 );
+        params.y = settings.getInt( "service_last_y_" + mOrientation, ( mScreenHeight - mView.getHeight() ) - 30 );
         params.gravity = Gravity.TOP | Gravity.LEFT;
-        if( params.x == 0 && params.y == 0 ) {
-            // float right by default
-            params.x = mScreenWidth - mBumpView.getWidth();
-            params.y = ( mScreenHeight / 2 ) - mBumpView.getHeight();
-        }
-        wm.updateViewLayout(mBumpView, params);
+        wm.updateViewLayout( mView, params );
 
-        params = (WindowManager.LayoutParams)mView.getLayoutParams();
-        params.x = settings.getInt( "service_last_x", 0 );
-        params.y = settings.getInt( "service_last_y", 0 );
+        params = (WindowManager.LayoutParams)mExtraView.getLayoutParams();
+        params.x = settings.getInt( "service_extra_last_x_" + mOrientation, 0 );
+        params.y = settings.getInt( "service_extra_last_y_" + mOrientation, 0 );
         params.gravity = Gravity.TOP | Gravity.LEFT;
-        if( params.x == 0 && params.y == 0 ) {
-            // bottom center
-            params.x = ( mScreenWidth - mView.getWidth() ) / 2;
-            params.y = ( mScreenHeight - mView.getHeight() ) - 30;
-        }
-        
-        wm.updateViewLayout(mView, params);
-        
+        wm.updateViewLayout( mExtraView, params );
     }
     
     private boolean genericClick( View v, boolean longClick) {
@@ -415,14 +522,81 @@ public class SoftKeysService extends Service {
             case R.id.exit:
                 hide = true;
                 break;
+            
+            case R.id.extra_center:
+                keyid = K.KEYID_DPAD_CENTER;
+                hide = false;
+                break;
+                
+            case R.id.extra_up:
+                keyid = K.KEYID_DPAD_UP;
+                hide = false;
+                break;
+                
+            case R.id.extra_down:
+                keyid = K.KEYID_DPAD_DOWN;
+                hide = false;
+                break;
+                
+            case R.id.extra_left:
+                keyid = K.KEYID_DPAD_LEFT;
+                hide = false;
+                break;
+                
+            case R.id.extra_right:
+                keyid = K.KEYID_DPAD_RIGHT;
+                hide = false;
+                break;
+
+            case R.id.extra_more:
+                mNumRows++;
+                if( mNumRows > 3 ) {
+                    mNumRows = 3;
+                }
+                updateExtraRows();
+                hide = false;
+                break;
+                
+            case R.id.extra_less:
+                mNumRows--;
+                if( mNumRows < 0 ) {
+                    mNumRows = 0;
+                }
+                updateExtraRows();
+                hide = false;
+                break;
+                
+            case R.id.extra_custom1:
+            case R.id.extra_custom2:
+            case R.id.extra_custom3:
+            case R.id.extra_custom4:
+            case R.id.extra_custom5:
+            case R.id.extra_custom6:
+                keyid = mCustomKeys.get( v.getId() );
+                hide = false;
+                break;
+                
+            default:
+                return true;
         }
         
         if( keyid != 0 ) {
-            app.sendKeys( new int[] { keyid } );
+            if( keyid == -1 ) {
+                // sleep
+                try {
+                    Globals.RootContext cmd = ((Globals)getApplication()).getRootContext();
+                    cmd.runCommand( "sleep" );
+                }catch( Exception e ) {
+                    // we don't really care if this fails, they should have gotten a shell
+                    // error from the sendkeys
+                }
+            }else{
+                app.sendKeys( new int[] { keyid } );
+            }
         }
         
         if( hide ) {
-            toggle_bar();
+            toggleBar();
         }
         
         return true;
@@ -439,23 +613,47 @@ public class SoftKeysService extends Service {
         mView = null;
         mBumpView = null;
         
-        mOrientation.disable();
+        mOrientationListener.disable();
     }
-
+    
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
+    
     private void d( String msg ) {
         Log.d( "SoftKeysService", msg );
     }
     
-    public void toggle_bar() {
+    public void toggleBar() {
         if( mView.getVisibility() == View.INVISIBLE ) {
             mView.setVisibility( View.VISIBLE );
         }else{
             mView.setVisibility( View.INVISIBLE );            
+        }
+        matchExtraView();
+    }
+    
+    public void matchExtraView() {
+        if( mExtraEnabled ) {
+            mExtraView.setVisibility( mView.getVisibility() );
+        }else{
+            mExtraView.setVisibility( View.INVISIBLE );
+        }
+    }
+    
+    private void updateExtraRows() {
+        int i = 0;
+        int[] ids = { R.id. extra_row1, R.id.extra_row2, R.id.extra_row3 };
+        
+        for( int id : ids ) {
+            i++;
+
+            if( mNumRows < i ) {
+                mExtraView.findViewById( id ).setVisibility( View.GONE );
+            }else{
+                mExtraView.findViewById( id ).setVisibility( View.VISIBLE );                
+            }            
         }
     }
     
@@ -464,15 +662,17 @@ public class SoftKeysService extends Service {
         
         SharedPreferences.Editor e = settings.edit();
         WindowManager.LayoutParams l = (WindowManager.LayoutParams)mView.getLayoutParams();
-        e.putInt( "service_last_x", l.x );
-        e.putInt( "service_last_y", l.y );
+        e.putInt( "service_last_x_" + mOrientation, l.x );
+        e.putInt( "service_last_y_" + mOrientation, l.y );
         
         l = (WindowManager.LayoutParams)mBumpView.getLayoutParams();
-        e.putInt( "service_bump_last_x", l.x );
-        e.putInt( "service_bump_last_y", l.y );
+        e.putInt( "service_bump_last_x_" + mOrientation, l.x );
+        e.putInt( "service_bump_last_y_" + mOrientation, l.y );
         
-        e.putInt( "service_last_orientation",
-                ((LinearLayout)mView.findViewById( R.id.button_container )).getOrientation() );
+        l = (WindowManager.LayoutParams)mExtraView.getLayoutParams();
+        e.putInt( "service_extra_last_x_" + mOrientation, l.x );
+        e.putInt( "service_extra_last_y_" + mOrientation, l.y );
+        
         e.commit();
     }
     
