@@ -4,4 +4,6 @@
           android:title="@string/help" />
     <item android:id="@+id/menu_settings"
           android:title="@string/settings" />
+    <item android:id="@+id/menu_quit"
+          android:title="@string/quit" />
 </menu>
