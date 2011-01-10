@@ -402,7 +402,7 @@ public class SoftKeysService extends Service {
                     break;
             }
         }
-        mNumRows = 0;
+        mNumRows = settings.getInt( "service_extra_num_custom", 0 );
         updateExtraRows();
         
         // update the button configs, they are simply mapped by id in to a hashmap
@@ -550,8 +550,8 @@ public class SoftKeysService extends Service {
 
             case R.id.extra_more:
                 mNumRows++;
-                if( mNumRows > 3 ) {
-                    mNumRows = 3;
+                if( mNumRows > 6 ) {
+                    mNumRows = 6;
                 }
                 updateExtraRows();
                 hide = false;
@@ -644,7 +644,14 @@ public class SoftKeysService extends Service {
     
     private void updateExtraRows() {
         int i = 0;
-        int[] ids = { R.id. extra_row1, R.id.extra_row2, R.id.extra_row3 };
+        int[] ids = {
+                R.id.extra_custom1,
+                R.id.extra_custom2,
+                R.id.extra_custom3,
+                R.id.extra_custom4,
+                R.id.extra_custom5,
+                R.id.extra_custom6
+            };
         
         for( int id : ids ) {
             i++;
@@ -655,6 +662,13 @@ public class SoftKeysService extends Service {
                 mExtraView.findViewById( id ).setVisibility( View.VISIBLE );                
             }            
         }
+        
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
+        
+        SharedPreferences.Editor e = settings.edit();
+        e.putInt( "service_extra_num_custom", mNumRows );
+        e.commit();
+
     }
     
     private void savePosition() {
