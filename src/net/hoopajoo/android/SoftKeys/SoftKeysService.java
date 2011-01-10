@@ -354,10 +354,10 @@ public class SoftKeysService extends Service {
         
         // extra view (dpad, customizable buttons)
         mExtraView = l.inflate( R.layout.service_extra, null );
-        Generator.applyContainerExtras( mExtraView, "service_extra",
+        Generator.applyContainerExtras( mExtraView.findViewById( R.id.button_container ), "service_extra",
             Generator.currentTheme( this ),
             Generator.scaledIconSize( this, 0, buttonMult ) );
-        
+
         mExtraView.setOnTouchListener( touch );
         
         OnLongClickListener configButtons = new OnLongClickListener() {
@@ -427,10 +427,7 @@ public class SoftKeysService extends Service {
                     break;
             }
         }
-        mNumRows = settings.getInt( "service_extra_num_custom", 0 );
-        mExtraEnabled = settings.getBoolean( "service_extra_enabled", false );
-        updateExtraRows();
-        
+
         // update the button configs, they are simply mapped by id in to a hashmap
         int i = 0;
         for( int id : new int[] { 
@@ -460,8 +457,13 @@ public class SoftKeysService extends Service {
             ((Button)mExtraView.findViewById( id )).setText( keyname );
             mCustomKeys.put( id, keycode );
         }
+
         applyTransparency( mExtraView, settings.getInt( "service_extra_transparency", 0 ) );
-        
+
+        mNumRows = settings.getInt( "service_extra_num_custom", 0 );
+        mExtraEnabled = settings.getBoolean( "service_extra_enabled", false );
+        updateExtraRows();
+                
         // hide stuff
         toggleBar();
         
@@ -669,9 +671,11 @@ public class SoftKeysService extends Service {
         WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
         wm.removeView( mView );
         wm.removeView( mBumpView );
+        wm.removeView( mExtraView );
         
         mView = null;
         mBumpView = null;
+        mExtraView = null;
         
         mOrientationListener.disable();
     }
