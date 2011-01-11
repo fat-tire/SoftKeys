@@ -94,7 +94,11 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             mAction = act;
             mExtraString = extra;
         }
-
+        
+        NotificationButton( String text, String pref, RemoteViews view, Drawable d, int icon, String act ) {
+            this( text, pref, view, d, icon, act, null );
+        }
+        
         NotificationButton( String text, String pref, int icon, String act ) {
             this( text, pref, null, null, icon, act, null );
         }
@@ -250,22 +254,22 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     theme.getRemoteViews( new String[] { "notification_menu" } ),
                     theme.getDrawable(  new String[] { "notification_menu" }  ),
                     R.drawable.button_menu,
-                    SendInput.ACTION_CODE, "menu" );
+                    SendInput.ACTION_MENU );
             nb[ 2 ] = new NotificationButton( "Home", "nb_home", 
                     theme.getRemoteViews( new String[] { "notification_home" } ), 
                     theme.getDrawable(  new String[] { "notification_home" }  ),
                     R.drawable.button_home,
-                    SendInput.ACTION_CODE, "home" );
+                    SendInput.ACTION_HOME );
             nb[ 3 ] = new NotificationButton( "Back", "nb_back",
                     theme.getRemoteViews( new String[] { "notification_back" } ), 
                     theme.getDrawable(  new String[] { "notification_back" }  ),
                     R.drawable.button_back,
-                    SendInput.ACTION_CODE, "back" );
+                    SendInput.ACTION_BACK );
             nb[ 4 ] = new NotificationButton( "Search", "nb_search",
                     theme.getRemoteViews( new String[] { "notification_search" } ), 
                     theme.getDrawable(  new String[] { "notification_search" }  ),
                     R.drawable.button_search,
-                    SendInput.ACTION_CODE, "back" );
+                    SendInput.ACTION_SEARCH );
             
             for( NotificationButton b : nb ) {
                 if( settings.getBoolean( b.mPrefKey, false ) ) {
@@ -274,6 +278,9 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     si.putExtra( "keyname", b.mExtraString );
                     if( b.mAction == Intent.ACTION_MAIN ) {
                         si.setPackage( getPackageName() );
+                    }else{
+                        //si.setPackage( getPackageName() );
+                        si.setClass( this, SendInput.class );
                     }
                     PendingIntent i = PendingIntent.getActivity( this, 0, si, 0 );
                     
