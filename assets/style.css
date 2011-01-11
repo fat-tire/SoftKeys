@@ -1,0 +1,12 @@
+.header {
+    font-size: 105% ;
+    font-weight: bold
+}
+
+a {
+    color: blue
+}
+
+a:visited {
+    color: blue
+}
