@@ -117,7 +117,7 @@ public class SendInput extends Activity {
         }
                 
         if( keyid != 0 ) {
-            Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
+            //Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
             ((Globals)getApplication()).sendKeys( new int[] { keyid } );
         }
         
