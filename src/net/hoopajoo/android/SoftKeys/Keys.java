@@ -59,6 +59,11 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 public class Keys extends Activity implements OnClickListener, OnLongClickListener {
+    public static String ACTION_HOME = "net.hoopajoo.android.SoftKeys.KEY_HOME";
+    public static String ACTION_MENU = "net.hoopajoo.android.SoftKeys.KEY_MENU";
+    public static String ACTION_SEARCH = "net.hoopajoo.android.SoftKeys.KEY_SEARCH";
+    public static String ACTION_BACK = "net.hoopajoo.android.SoftKeys.KEY_BACK";
+
     private String defaultLauncher;
     private boolean isPreTap = false;
     private final String LOG = "SoftKeys";
@@ -254,22 +259,22 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                     theme.getRemoteViews( new String[] { "notification_menu" } ),
                     theme.getDrawable(  new String[] { "notification_menu" }  ),
                     R.drawable.button_menu,
-                    SendInput.ACTION_MENU );
+                    ACTION_MENU );
             nb[ 2 ] = new NotificationButton( "Home", "nb_home", 
                     theme.getRemoteViews( new String[] { "notification_home" } ), 
                     theme.getDrawable(  new String[] { "notification_home" }  ),
                     R.drawable.button_home,
-                    SendInput.ACTION_HOME );
+                    ACTION_HOME );
             nb[ 3 ] = new NotificationButton( "Back", "nb_back",
                     theme.getRemoteViews( new String[] { "notification_back" } ), 
                     theme.getDrawable(  new String[] { "notification_back" }  ),
                     R.drawable.button_back,
-                    SendInput.ACTION_BACK );
+                    ACTION_BACK );
             nb[ 4 ] = new NotificationButton( "Search", "nb_search",
                     theme.getRemoteViews( new String[] { "notification_search" } ), 
                     theme.getDrawable(  new String[] { "notification_search" }  ),
                     R.drawable.button_search,
-                    SendInput.ACTION_SEARCH );
+                    ACTION_SEARCH );
             
             for( NotificationButton b : nb ) {
                 if( settings.getBoolean( b.mPrefKey, false ) ) {
@@ -280,7 +285,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
                         si.setPackage( getPackageName() );
                     }else{
                         //si.setPackage( getPackageName() );
-                        si.setClass( this, SendInput.class );
+                        si.setClass( this, Keys.class );
                     }
                     PendingIntent i = PendingIntent.getActivity( this, 0, si, 0 );
                     
@@ -422,6 +427,35 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         if( app.firstRun ) {
             if( i.hasCategory( Intent.CATEGORY_HOME ) ) {
                 app.firstRun = false;
+                return;
+            }
+        }
+        
+        if( true ) {
+            String action = i.getAction();
+            int keyid = 0;
+            if( action.equals( ACTION_HOME ) ) {
+                app.doHomeAction( false );
+                this.finish();
+                return;            
+            }
+            
+            if( action.equals( ACTION_BACK ) ) {
+                keyid = K.KEYID_BACK;
+            }
+            
+            if( action.equals( ACTION_MENU ) ) {
+                keyid = K.KEYID_MENU;
+            }
+            
+            if( action.equals( ACTION_SEARCH ) ) {
+                keyid = K.KEYID_SEARCH;
+            }
+                    
+            if( keyid != 0 ) {
+                //Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
+                app.sendKeys( new int[] { keyid } );
+                this.finish();
                 return;
             }
         }

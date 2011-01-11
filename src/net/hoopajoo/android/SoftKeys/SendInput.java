@@ -86,7 +86,7 @@ public class SendInput extends Activity {
                 String key = e.getString( "keyname" );
                 //Log.d( "SoftKeys.SendInput", "resolving: " + key );
                 if( key.equals( "home" ) ) {
-                    ((Globals)getApplication()).doHomeAction( longClick );
+                    app.doHomeAction( longClick );
                     this.finish();
                     return;
                 }else{
@@ -99,7 +99,7 @@ public class SendInput extends Activity {
         }
 
         if( action.equals( ACTION_HOME ) ) {
-            ((Globals)getApplication()).doHomeAction( false );
+            app.doHomeAction( false );
             this.finish();
             return;            
         }
@@ -118,12 +118,9 @@ public class SendInput extends Activity {
                 
         if( keyid != 0 ) {
             //Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
-            ((Globals)getApplication()).sendKeys( new int[] { keyid } );
+            app.sendKeys( new int[] { keyid } );
         }
         
-        // todo: make me a broadcast receiver.. or maybe this should be removed all together?
-        // any good reasons to allow other apps to call hw keys?
-        this.finish();       
-
+        this.finish();
     }
 }
