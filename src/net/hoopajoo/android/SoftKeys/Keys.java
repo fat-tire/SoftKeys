@@ -435,32 +435,34 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
         }
         
         // check for key actions from notifications
-        if( true ) {
+        if( i != null ) {
             String action = i.getAction();
-            int keyid = 0;
-            if( action.equals( ACTION_HOME ) ) {
-                app.doHomeAction( false );
-                this.finish();
-                return;            
-            }
-            
-            if( action.equals( ACTION_BACK ) ) {
-                keyid = K.KEYID_BACK;
-            }
-            
-            if( action.equals( ACTION_MENU ) ) {
-                keyid = K.KEYID_MENU;
-            }
-            
-            if( action.equals( ACTION_SEARCH ) ) {
-                keyid = K.KEYID_SEARCH;
-            }
-                    
-            if( keyid != 0 ) {
-                //Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
-                app.sendKeys( new int[] { keyid } );
-                this.finish();
-                return;
+            if( action != null ) {
+                int keyid = 0;
+                if( action.equals( ACTION_HOME ) ) {
+                    app.doHomeAction( false );
+                    this.finish();
+                    return;            
+                }
+                
+                if( action.equals( ACTION_BACK ) ) {
+                    keyid = K.KEYID_BACK;
+                }
+                
+                if( action.equals( ACTION_MENU ) ) {
+                    keyid = K.KEYID_MENU;
+                }
+                
+                if( action.equals( ACTION_SEARCH ) ) {
+                    keyid = K.KEYID_SEARCH;
+                }
+                        
+                if( keyid != 0 ) {
+                    //Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
+                    app.sendKeys( new int[] { keyid } );
+                    this.finish();
+                    return;
+                }
             }
         }
         
