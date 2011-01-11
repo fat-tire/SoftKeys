@@ -60,10 +60,6 @@ import android.widget.Toast;
 // this is just a stub to handle intent calls
 public class SendInput extends Activity {
     public static String ACTION_CODE = "net.hoopajoo.android.SoftKeys.KEY_CODE";
-    public static String ACTION_HOME = "net.hoopajoo.android.SoftKeys.KEY_HOME";
-    public static String ACTION_MENU = "net.hoopajoo.android.SoftKeys.KEY_MENU";
-    public static String ACTION_SEARCH = "net.hoopajoo.android.SoftKeys.KEY_SEARCH";
-    public static String ACTION_BACK = "net.hoopajoo.android.SoftKeys.KEY_BACK";
 
     /** Called when the activity is first created. */
     @Override
@@ -98,28 +94,7 @@ public class SendInput extends Activity {
             }
         }
 
-        if( action.equals( ACTION_HOME ) ) {
-            app.doHomeAction( false );
-            this.finish();
-            return;            
-        }
-        
-        if( action.equals( ACTION_BACK ) ) {
-            keyid = K.KEYID_BACK;
-        }
-        
-        if( action.equals( ACTION_MENU ) ) {
-            keyid = K.KEYID_MENU;
-        }
-        
-        if( action.equals( ACTION_SEARCH ) ) {
-            keyid = K.KEYID_SEARCH;
-        }
-                
-        if( keyid != 0 ) {
-            //Log.d( "SoftKeys.SendInput", "resolved key: " + keyid );
-            app.sendKeys( new int[] { keyid } );
-        }
+
         
         this.finish();
     }
