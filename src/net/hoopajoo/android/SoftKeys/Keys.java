@@ -383,6 +383,9 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             SharedPreferences.Editor e = settings.edit();
             e.putInt( "last_intro_level", force_level );
             e.commit();
+        }else{
+            // bypass first run logic, so at power-on we just go home
+            app.firstRun = false;
         }
         
         // simulate wake
@@ -431,6 +434,7 @@ public class Keys extends Activity implements OnClickListener, OnLongClickListen
             }
         }
         
+        // check for key actions from notifications
         if( true ) {
             String action = i.getAction();
             int keyid = 0;
