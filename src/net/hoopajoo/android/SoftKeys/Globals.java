@@ -164,19 +164,6 @@ public class Globals extends Application {
     
     @Override
     public void onCreate() {
-        // warn if we don't notice some binaries we need
-        for( String name : new String[] { "/system/bin/su" } ) {
-            File check = new File( name );
-            try {
-                if( ! check.exists() ) {
-                    Toast.makeText( this, "Failed to find file: " + name + ", SoftKeys may not function", Toast.LENGTH_LONG ).show();                    
-                }
-            }catch( Exception e ) {
-                Toast.makeText( this, "Unable to check for file: " + name, Toast.LENGTH_LONG ).show();
-            }
-                
-        }
-
         android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         
         // init the shell
