@@ -31,37 +31,37 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="custom"/>
+		android:text="@string/custom"/>
 	<Spinner
 		android:id="@+id/extra_custom2"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="custom"/>	
+		android:text="@string/custom"/>	
 	<Spinner
 		android:id="@+id/extra_custom3"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="custom"/>
+		android:text="@string/custom"/>
 	<Spinner
 		android:id="@+id/extra_custom4"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="custom"/>
+		android:text="@string/custom"/>
 	<Spinner
 		android:id="@+id/extra_custom5"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="custom"/>
+		android:text="@string/custom"/>
 	<Spinner
 		android:id="@+id/extra_custom6"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="custom6"/>
+		android:text="@string/custom"/>
 
 	<LinearLayout
 		android:id="@+id/extra_row_modify"
@@ -75,14 +75,14 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:text="Cancel"/>
+			android:text="@string/cancel"/>
 			
 		<Button
 			android:id="@+id/extra_modify_save"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:text="Save"/>
+			android:text="@string/save"/>
 	</LinearLayout>
 	
 </LinearLayout>
